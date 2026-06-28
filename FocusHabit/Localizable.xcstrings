@@ -1,0 +1,55 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Add Habit" : {
+      "localizations" : {
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "習慣を追加" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Añadir hábito" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Gewohnheit hinzufügen" } }
+      }
+    },
+    "Delete" : {
+      "localizations" : {
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "削除" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Eliminar" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Löschen" } }
+      }
+    },
+    "streak" : {
+      "localizations" : {
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "連続日数" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "racha" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Serie" } }
+      }
+    },
+    "Build your habits" : {
+      "localizations" : {
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "習慣を作ろう" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Construye tus hábitos" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Baue deine Gewohnheiten auf" } }
+      }
+    },
+    "Habits" : {
+      "localizations" : {
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "習慣" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Hábitos" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Gewohnheiten" } }
+      }
+    },
+    "Focus" : {
+      "localizations" : {
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "集中" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Enfoque" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Fokus" } }
+      }
+    },
+    "Settings" : {
+      "localizations" : {
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "設定" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Ajustes" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Einstellungen" } }
+      }
+    }
+  },
+  "version" : "1.0"
+}

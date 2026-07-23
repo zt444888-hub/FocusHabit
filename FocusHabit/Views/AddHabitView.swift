@@ -2,7 +2,7 @@
  import SwiftData
  
  struct AddHabitView: View {
-     @Bindable var habit: Habit?
+     let habit: Habit?
      @Environment(\.modelContext) private var context
      @Environment(\.dismiss) private var dismiss
      

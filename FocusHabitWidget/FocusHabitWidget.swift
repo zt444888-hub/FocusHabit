@@ -1,26 +1,19 @@
- import WidgetKit
- import SwiftUI
- 
- struct HabitEntry: TimelineEntry {
-     let date: Date
-     let habits: [WidgetHabit]
- }
- 
- struct WidgetHabit: Codable, Identifiable {
-     let id: String
-     let name: String
-     let isCompleted: Bool
-     let streak: Int
- }
- 
- struct Provider: TimelineProvider {
+import WidgetKit
+import SwiftUI
+
+struct HabitEntry: TimelineEntry {
+    let date: Date
+    let habits: [WidgetHabit]
+}
+
+struct Provider: TimelineProvider {
      let defaults = UserDefaults(suiteName: "group.com.yourapp.FocusHabit")
      
      func placeholder(in context: Context) -> HabitEntry {
          HabitEntry(date: Date(), habits: [
-             WidgetHabit(id: "1", name: "Read 30 min", isCompleted: false, streak: 5),
-             WidgetHabit(id: "2", name: "Exercise", isCompleted: true, streak: 12),
-             WidgetHabit(id: "3", name: "Meditate", isCompleted: false, streak: 3),
+             WidgetHabit(id: "1", name: "Read 30 min", isCompleted: false, streak: 5, weeklyRate: 0.71),
+             WidgetHabit(id: "2", name: "Exercise", isCompleted: true, streak: 12, weeklyRate: 0.86),
+             WidgetHabit(id: "3", name: "Meditate", isCompleted: false, streak: 3, weeklyRate: 0.43),
          ])
      }
      
@@ -54,7 +47,7 @@
              HStack {
                  Image(systemName: "checklist")
                      .font(.caption)
-                     .foregroundColor(.orange)
+                     .foregroundColor(.brand)
                  Text("Today's Habits")
                      .font(.caption.weight(.semibold))
                      .foregroundColor(.primary)
@@ -77,7 +70,7 @@
                      HStack(spacing: 8) {
                          Image(systemName: habit.isCompleted ? "checkmark.circle.fill" : "circle")
                              .font(.caption)
-                             .foregroundColor(habit.isCompleted ? .orange : .secondary)
+                             .foregroundColor(habit.isCompleted ? .brand : .secondary)
                          Text(habit.name)
                              .font(.caption)
                              .strikethrough(habit.isCompleted)
@@ -87,7 +80,7 @@
                              HStack(spacing: 2) {
                                  Image(systemName: "flame.fill")
                                      .font(.caption2)
-                                     .foregroundColor(.orange)
+                                     .foregroundColor(.brand)
                                  Text("\(habit.streak)")
                                      .font(.caption2)
                                      .foregroundColor(.secondary)
@@ -98,6 +91,7 @@
              }
          }
          .containerBackground(.background, for: .widget)
+        .widgetURL(URL(string: "focushabit://"))
      }
  }
  

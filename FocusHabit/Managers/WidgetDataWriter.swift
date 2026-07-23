@@ -1,13 +1,5 @@
-﻿import Foundation
+﻿@preconcurrency import Foundation
 import SwiftData
-
-// Shared struct — must be identical to the one in FocusHabitWidget target
-struct WidgetHabit: Codable, Identifiable {
-    let id: String
-    let name: String
-    let isCompleted: Bool
-    let streak: Int
-}
 
 struct WidgetDataWriter {
     private static let defaults = UserDefaults(suiteName: "group.com.yourapp.FocusHabit")

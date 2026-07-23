@@ -1,0 +1,82 @@
+name: FocusHabit
+options:
+  bundleIdPrefix: com.a1111
+  deploymentTarget:
+    iOS: "17.0"
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+
+targets:
+  FocusHabit:
+    type: application
+    platform: iOS
+    sources:
+      - FocusHabit/Views
+      - FocusHabit/Models
+      - FocusHabit/Managers
+      - FocusHabit/Resources
+      - FocusHabit/FocusHabitApp.swift
+      - FocusHabit/Theme.swift
+      - Shared
+    info:
+      path: FocusHabit/Info.plist
+      properties:
+        CFBundleDisplayName: FocusHabit Pro
+        CFBundlePackageType: APPL
+        CFBundleShortVersionString: "1.3"
+        CFBundleVersion: "2"
+        LSRequiresIPhoneOS: true
+        UILaunchScreen: {}
+        UIBackgroundModes: [audio]
+        UIRequiredDeviceCapabilities: [armv7]
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        CFBundleIconName: AppIcon
+        CFBundleURLTypes:
+          - CFBundleURLSchemes:
+              - focushabit
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.a1111.FocusHabit
+      DEVELOPMENT_TEAM: ""
+      CODE_SIGN_STYLE: Automatic
+      TARGETED_DEVICE_FAMILY: "1,2"
+    entitlements:
+      path: FocusHabit/FocusHabit.entitlements
+
+  FocusHabitWidget:
+    type: app-extension
+    platform: iOS
+    sources:
+      - FocusHabitWidget
+      - Shared
+      - FocusHabit/Theme.swift
+    info:
+      path: FocusHabitWidget/Info.plist
+      properties:
+        CFBundleDisplayName: FocusHabit Pro Widget
+        CFBundlePackageType: XPC!
+        CFBundleShortVersionString: "1.3"
+        CFBundleVersion: "2"
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.a1111.FocusHabit.FocusHabitWidget
+      DEVELOPMENT_TEAM: ""
+      CODE_SIGN_STYLE: Automatic
+    entitlements:
+      path: FocusHabitWidget/FocusHabitWidget.entitlements
+
+  FocusHabitTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - FocusHabitTests
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.a1111.FocusHabitTests
+      DEVELOPMENT_TEAM: ""
+      CODE_SIGN_STYLE: Automatic
+      GENERATE_INFOPLIST_FILE: YES
+    dependencies:
+      - target: FocusHabit

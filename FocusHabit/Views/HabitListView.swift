@@ -7,22 +7,64 @@ struct HabitListView: View {
     @Environment(\.modelContext) private var context
     @State private var showAddSheet = false
     @State private var editingHabit: Habit?
+    @State private var detailHabit: Habit?
+    @State private var showPaywall = false
+    private var canAddMore: Bool {
+        StoreManager.shared.isPremium || habits.count < StoreManager.shared.maxFreeHabits
+    }
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 16) {
-                    headerSection
-                    habitsSection
+            List {
+                headerSection
+                    .listRowInsets(EdgeInsets())
+                    .listRowBackground(Color.clear)
+
+                if habits.isEmpty {
+                    emptyState
+                        .listRowBackground(Color.clear)
+                        .listRowInsets(EdgeInsets())
                 }
-                .padding(.horizontal)
+
+                ForEach(habits) { habit in
+                    HabitCardView(habit: habit, onShowDetail: { detailHabit = $0 })
+                        .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                        .listRowBackground(Color.clear)
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            Button(role: .destructive) {
+                                withAnimation {
+                                    context.delete(habit)
+                                    try? context.save()
+                                }
+                            } label: {
+                                Label(T("Delete"), systemImage: "trash")
+                            }
+                        }
+                        .contextMenu {
+                            Button(role: .destructive) {
+                                withAnimation {
+                                    context.delete(habit)
+                                    try? context.save()
+                                }
+                            } label: {
+                                Label(T("Delete"), systemImage: "trash")
+                            }
+                        }
+                        .onTapGesture {
+                            editingHabit = habit
+                        }
+                }
             }
-            .background(Color(.systemGroupedBackground))
-            .navigationTitle("Habits")
+            .listStyle(.insetGrouped)
+            .navigationTitle(T("Habits"))
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        showAddSheet = true
+                        if canAddMore {
+                            showAddSheet = true
+                        } else {
+                            showPaywall = true
+                        }
                     } label: {
                         Image(systemName: "plus.circle.fill")
                             .font(.title3)
@@ -35,6 +77,12 @@ struct HabitListView: View {
             }
             .sheet(item: $editingHabit) { habit in
                 AddHabitView(habit: habit)
+            }
+            .navigationDestination(item: $detailHabit) { habit in
+                HabitDetailView(habit: habit)
+            }
+            .sheet(isPresented: $showPaywall) {
+                PaywallView()
             }
             .onAppear {
                 NotificationManager.requestAuthorization()
@@ -55,52 +103,27 @@ struct HabitListView: View {
             .padding(.top, 8)
     }
 
-    private var habitsSection: some View {
-        LazyVStack(spacing: 12) {
-            if habits.isEmpty {
-                emptyState
-            } else {
-                ForEach(habits) { habit in
-                    HabitCardView(habit: habit)
-                        .contextMenu {
-                            Button(role: .destructive) {
-                                withAnimation {
-                                    context.delete(habit)
-                                try? context.save()
-                                }
-                            } label: {
-                                Label("Delete", systemImage: "trash")
-                            }
-                        }
-                        .onTapGesture {
-                            editingHabit = habit
-                        }
-                        .transition(.asymmetric(
-                            insertion: .scale(scale: 0.95).combined(with: .opacity),
-                            removal: .scale(scale: 0.95).combined(with: .opacity)
-                        ))
-                }
-            }
-        }
-    }
-
     private var emptyState: some View {
         VStack(spacing: 20) {
             Spacer().frame(height: 60)
             Image(systemName: "figure.mind.and.body")
                 .font(.system(size: 60))
                 .foregroundStyle(.orange.opacity(0.3))
-            Text("Build your habits")
+            Text(verbatim: T("Build your habits"))
                 .font(.title2.weight(.semibold))
                 .foregroundColor(.primary)
-            Text("Start small. Stay consistent.\nAdd your first habit to begin.")
+            Text(verbatim: T("Start small. Stay consistent.\nAdd your first habit to begin."))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
             Button {
-                showAddSheet = true
+                if canAddMore {
+                    showAddSheet = true
+                } else {
+                    showPaywall = true
+                }
             } label: {
-                Label("Add Habit", systemImage: "plus")
+                Label(T("Add Habit"), systemImage: "plus")
                     .font(.headline)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 12)
@@ -113,5 +136,3 @@ struct HabitListView: View {
         .padding(.top, 20)
     }
 }
-
-

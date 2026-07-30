@@ -1,4 +1,4 @@
- import SwiftUI
+﻿ import SwiftUI
  
  struct WeekCalendarView: View {
      var habits: [Habit]
@@ -19,7 +19,7 @@
      var body: some View {
          VStack(spacing: 12) {
              HStack {
-                 Text("This Week")
+                 Text(verbatim: T("This Week"))
                      .font(.subheadline.weight(.semibold))
                      .foregroundColor(.secondary)
                  Spacer()
@@ -45,8 +45,9 @@
      private var daysOfWeek: [Date] {
          let today = calendar.startOfDay(for: Date())
          let weekday = calendar.component(.weekday, from: today)
-         let daysFromSunday = weekday - 1
-         let weekStart = calendar.date(byAdding: .day, value: -daysFromSunday, to: today) ?? today
+         let firstWeekday = calendar.firstWeekday
+         let daysOffset = (weekday - firstWeekday + 7) % 7
+         let weekStart = calendar.date(byAdding: .day, value: -daysOffset, to: today) ?? today
          return (0..<7).compactMap { calendar.date(byAdding: .day, value: $0, to: weekStart) }
      }
      
@@ -62,25 +63,25 @@
          return VStack(spacing: 6) {
              Text(weekdayFormatter.string(from: date).prefix(1).uppercased())
                  .font(.system(size: 11, weight: .medium))
-                 .foregroundColor(isToday ? .orange : .secondary)
+                 .foregroundColor(isToday ? .brand : .secondary)
              
              ZStack {
                  if isToday {
                      Circle()
-                         .fill(Color.orange.opacity(0.12))
+                         .fill(Color.brand.opacity(0.12))
                          .frame(width: 32, height: 32)
                  }
                  Text(dateFormatter.string(from: date))
                      .font(.system(size: 15, weight: isToday ? .bold : .regular))
-                     .foregroundColor(isToday ? .orange : .primary)
+                     .foregroundColor(isToday ? .brand : .primary)
              }
              
              if total > 0 {
-                 let fraction = min(Double(completed) / Double(max(total, 1)), 1.0)
+                 // let fraction = ... unused
                  VStack(spacing: 2) {
                      ForEach(0..<min(3, total), id: \.self) { i in
                          Circle()
-                             .fill(i < completed ? Color.orange : Color(.systemGray5))
+                             .fill(i < completed ? Color.brand : Color(.systemGray5))
                              .frame(width: 5, height: 5)
                      }
                  }

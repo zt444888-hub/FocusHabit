@@ -24,14 +24,14 @@ struct CustomPresetEditorView: View {
         NavigationStack {
             Form {
                 Section {
-                    TextField("Preset name", text: $name)
+                    TextField(T("Preset name"), text: $name)
                 }
 
                 Section {
                     Stepper("Focus: \(focusMinutes) min", value: $focusMinutes, in: 1...180)
                     Stepper("Break: \(breakMinutes) min", value: $breakMinutes, in: 1...60)
                 } header: {
-                    Text("Duration")
+                    Text(verbatim: T("Duration"))
                 }
 
                 if let onDelete {
@@ -40,7 +40,7 @@ struct CustomPresetEditorView: View {
                             onDelete()
                             dismiss()
                         } label: {
-                            Label("Delete Preset", systemImage: "trash")
+                            Label(T("Delete Preset"), systemImage: "trash")
                         }
                     }
                 }
@@ -49,10 +49,10 @@ struct CustomPresetEditorView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button(T("Cancel")) { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
+                    Button(T("Save")) {
                         let preset = TimerPreset(
                             focusDuration: TimeInterval(focusMinutes * 60),
                             breakDuration: TimeInterval(breakMinutes * 60),

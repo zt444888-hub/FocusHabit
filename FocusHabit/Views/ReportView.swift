@@ -7,11 +7,13 @@ struct ReportView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
     @Query private var allHabits: [Habit]
+    @State private var showPaywall = false
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
+                    premiumBanner
                     thisWeekCard
                     fourWeekChart
                     recentActivity
@@ -19,13 +21,55 @@ struct ReportView: View {
                 .padding()
             }
             .background(Color(.systemGroupedBackground))
-            .navigationTitle("Weekly Report")
+            .navigationTitle(T("Weekly Report"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Done") { dismiss() }
+                    Button(T("Done")) { dismiss() }
                 }
             }
+            .sheet(isPresented: $showPaywall) {
+                PaywallView()
+            }
+        }
+    }
+
+    // MARK: - Premium Banner
+
+    @ViewBuilder
+    private var premiumBanner: some View {
+        if !StoreManager.shared.isPremium {
+            Button {
+                showPaywall = true
+            } label: {
+                HStack(spacing: 12) {
+                    Image(systemName: "crown.fill")
+                        .font(.title3)
+                        .foregroundColor(.orange)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(verbatim: T("Upgrade to Premium"))
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundColor(.primary)
+                        Text(verbatim: T("Unlock weekly reports & analytics"))
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                .padding(16)
+                .background(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .fill(Color.orange.opacity(0.08))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .stroke(Color.orange.opacity(0.2), lineWidth: 1)
+                )
+            }
+            .buttonStyle(.plain)
         }
     }
 
@@ -39,8 +83,9 @@ struct ReportView: View {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
         let weekday = calendar.component(.weekday, from: today)
-        let daysFromMonday = (weekday + 5) % 7  // Monday = 0
-        let weekStart = calendar.date(byAdding: .day, value: -daysFromMonday, to: today) ?? today
+        let firstWeekday = calendar.firstWeekday
+        let daysOffset = (weekday - firstWeekday + 7) % 7
+        let weekStart = calendar.date(byAdding: .day, value: -daysOffset, to: today) ?? today
         let weekEnd = calendar.date(byAdding: .day, value: 6, to: weekStart) ?? today
         return weekStart...weekEnd
     }
@@ -50,13 +95,16 @@ struct ReportView: View {
         let today = calendar.startOfDay(for: Date())
         let fmt = DateFormatter()
         fmt.dateFormat = "M/d"
+        let firstWeekday = calendar.firstWeekday
+        let weekday = calendar.component(.weekday, from: today)
+        let daysOffset = (weekday - firstWeekday + 7) % 7
 
         return (0..<4).map { weekOffset in
             let daysFromStart = weekOffset * 7
-            let monday = calendar.date(byAdding: .day, value: -(6 + daysFromStart), to: today) ?? today
-            let sunday = calendar.date(byAdding: .day, value: 6, to: monday) ?? today
-            let label = "\(fmt.string(from: monday))"
-            return (label, monday...sunday)
+            let weekStart = calendar.date(byAdding: .day, value: -(daysOffset + 7 + daysFromStart), to: today) ?? today
+            let weekEnd = calendar.date(byAdding: .day, value: 6, to: weekStart) ?? today
+            let label = "\(fmt.string(from: weekStart))"
+            return (label, weekStart...weekEnd)
         }.reversed()
     }
 
@@ -103,7 +151,7 @@ struct ReportView: View {
             }
 
             if rate < 0.5 {
-                Text("Keep going! Try to complete more habits this week.")
+                Text(verbatim: T("Keep going! Try to complete more habits this week."))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -125,7 +173,7 @@ struct ReportView: View {
         let focusTimes = weeks.map { focusSeconds(in: $0.range) }
 
         return VStack(alignment: .leading, spacing: 16) {
-            Text("Last 4 Weeks")
+            Text(verbatim: T("Last 4 Weeks"))
                 .font(.subheadline.weight(.semibold))
                 .foregroundColor(.secondary)
 
@@ -153,7 +201,7 @@ struct ReportView: View {
             // Focus time mini chart
             if focusTimes.contains(where: { $0 > 0 }) {
                 VStack(spacing: 8) {
-                    Text("Focus Time (min)")
+                    Text(verbatim: T("Focus Time (min)"))
                         .font(.caption2)
                         .foregroundColor(.secondary)
                     HStack(alignment: .bottom, spacing: 16) {
@@ -189,13 +237,13 @@ struct ReportView: View {
         }.sorted { $0.1 > $1.1 }.prefix(10)
 
         return VStack(alignment: .leading, spacing: 0) {
-            Text("Recent Activity")
+            Text(verbatim: T("Recent Activity"))
                 .font(.subheadline.weight(.semibold))
                 .foregroundColor(.secondary)
                 .padding(.bottom, 12)
 
             if allCompletions.isEmpty {
-                Text("No activity yet")
+                Text(verbatim: T("No activity yet"))
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                     .frame(maxWidth: .infinity)

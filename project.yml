@@ -6,7 +6,7 @@ options:
 
 settings:
   base:
-    SWIFT_VERSION: "6.0"
+    SWIFT_VERSION: "5.0"
 
 targets:
   FocusHabit:
@@ -17,6 +17,7 @@ targets:
       - FocusHabit/Models
       - FocusHabit/Managers
       - FocusHabit/Resources
+      - FocusHabit/Assets.xcassets
       - FocusHabit/FocusHabitApp.swift
       - FocusHabit/Theme.swift
       - Shared
@@ -25,7 +26,7 @@ targets:
       properties:
         CFBundleDisplayName: FocusHabit Pro
         CFBundlePackageType: APPL
-        CFBundleShortVersionString: "1.3"
+        CFBundleShortVersionString: "2.0"
         CFBundleVersion: "2"
         LSRequiresIPhoneOS: true
         UILaunchScreen: {}
@@ -33,23 +34,32 @@ targets:
         UIRequiredDeviceCapabilities: [armv7]
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
         CFBundleIconName: AppIcon
         CFBundleURLTypes:
           - CFBundleURLSchemes:
               - focushabit
     settings:
       PRODUCT_BUNDLE_IDENTIFIER: com.a1111.FocusHabit
-      DEVELOPMENT_TEAM: ""
+      DEVELOPMENT_TEAM: "2VBHV3VJ8N"
       CODE_SIGN_STYLE: Automatic
       TARGETED_DEVICE_FAMILY: "1,2"
     entitlements:
       path: FocusHabit/FocusHabit.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.a1111.FocusHabit
 
   FocusHabitWidget:
     type: app-extension
     platform: iOS
     sources:
       - FocusHabitWidget
+      - FocusHabit/Assets.xcassets
       - Shared
       - FocusHabit/Theme.swift
     info:
@@ -57,16 +67,19 @@ targets:
       properties:
         CFBundleDisplayName: FocusHabit Pro Widget
         CFBundlePackageType: XPC!
-        CFBundleShortVersionString: "1.3"
+        CFBundleShortVersionString: "2.0"
         CFBundleVersion: "2"
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     settings:
       PRODUCT_BUNDLE_IDENTIFIER: com.a1111.FocusHabit.FocusHabitWidget
-      DEVELOPMENT_TEAM: ""
+      DEVELOPMENT_TEAM: "2VBHV3VJ8N"
       CODE_SIGN_STYLE: Automatic
     entitlements:
       path: FocusHabitWidget/FocusHabitWidget.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.a1111.FocusHabit
 
   FocusHabitTests:
     type: bundle.unit-test
@@ -75,7 +88,7 @@ targets:
       - FocusHabitTests
     settings:
       PRODUCT_BUNDLE_IDENTIFIER: com.a1111.FocusHabitTests
-      DEVELOPMENT_TEAM: ""
+      DEVELOPMENT_TEAM: "2VBHV3VJ8N"
       CODE_SIGN_STYLE: Automatic
       GENERATE_INFOPLIST_FILE: YES
     dependencies:

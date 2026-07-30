@@ -7,9 +7,11 @@ struct FocusTimerView: View {
     @Query(filter: #Predicate<Habit> { !$0.isArchived })
     private var habits: [Habit]
 
-    @State private var timer = TimerManager()
+    private let timer = TimerManager.shared
     @State private var selectedHabitForTimer: Habit?
     @State private var showCompletionAlert = false
+    @State private var customPresets: [TimerPreset] = CustomPresetsManager.load()
+    private let audioManager = AudioManager.shared
 
     var body: some View {
         NavigationStack {
@@ -25,11 +27,14 @@ struct FocusTimerView: View {
                 presetSelector
 
                 todayStats
+
+                ambientSoundSelector
+                    .padding(.top, 16)
             }
             .padding()
             .background(Color(.systemGroupedBackground))
-            .navigationTitle("Focus")
-            .alert("Session Complete!", isPresented: $showCompletionAlert) {
+            .navigationTitle(T("Focus"))
+            .alert(T("Session Complete!"), isPresented: $showCompletionAlert) {
                 if !habits.isEmpty {
                     ForEach(habits) { habit in
                         Button(habit.name) {
@@ -37,11 +42,17 @@ struct FocusTimerView: View {
                         }
                     }
                 }
-                Button("Skip", role: .cancel) {
+                Button(T("Skip"), role: .cancel) {
                     timer.startNextFocus()
                 }
             } message: {
-                Text("Great focus! Did you work on a habit?")
+                Text(verbatim: T("Great focus! Did you work on a habit?"))
+            }
+            .onAppear {
+                customPresets = CustomPresetsManager.load()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .init("CustomPresetsChanged"))) { _ in
+                customPresets = CustomPresetsManager.load()
             }
             .onChange(of: timer.state) { _, newValue in
                 if case .finished(.focus) = newValue {
@@ -49,10 +60,13 @@ struct FocusTimerView: View {
                 }
             }
             .onChange(of: scenePhase) { _, newPhase in
-                if newPhase == .background || newPhase == .inactive {
+                if newPhase == .active {
+                    timer.handleAppForeground()
+                } else if newPhase == .background || newPhase == .inactive {
                     timer.handleAppBackground()
                 }
             }
+
         }
     }
 
@@ -66,7 +80,7 @@ struct FocusTimerView: View {
                 .trim(from: 0, to: timer.progress)
                 .stroke(
                     AngularGradient(
-                        colors: [.orange, .orange.opacity(0.6)],
+                        colors: [.brand, .brand.opacity(0.6)],
                         center: .center,
                         startAngle: .degrees(-90),
                         endAngle: .degrees(270)
@@ -82,9 +96,9 @@ struct FocusTimerView: View {
                     .font(.system(size: 56, weight: .bold, design: .rounded))
                     .monospacedDigit()
 
-                Text(timer.state == .idle ? "Ready" :
-                     timer.state == .paused ? "Paused" :
-                     timer.state == .running ? "Focusing..." : "")
+                Text(timer.state == .idle ? T("Ready") :
+                     timer.state == .paused ? T("Paused") :
+                     timer.state == .running ? T("Focusing...") : "")
                     .font(.subheadline.weight(.medium))
                     .foregroundColor(.secondary)
             }
@@ -102,8 +116,8 @@ struct FocusTimerView: View {
                         .font(.title)
                         .foregroundColor(.white)
                         .frame(width: 64, height: 64)
-                        .background(.orange, in: Circle())
-                        .shadow(color: .orange.opacity(0.3), radius: 12, y: 4)
+                        .background(.brand, in: Circle())
+                        .shadow(color: .brand.opacity(0.3), radius: 12, y: 4)
                 }
             }
 
@@ -115,8 +129,8 @@ struct FocusTimerView: View {
                         .font(.title)
                         .foregroundColor(.white)
                         .frame(width: 64, height: 64)
-                        .background(.orange, in: Circle())
-                        .shadow(color: .orange.opacity(0.3), radius: 12, y: 4)
+                        .background(.brand, in: Circle())
+                        .shadow(color: .brand.opacity(0.3), radius: 12, y: 4)
                 }
             }
 
@@ -136,10 +150,18 @@ struct FocusTimerView: View {
     }
 
     private var presetSelector: some View {
-        HStack(spacing: 12) {
-            presetButton(.pomodoro)
-            presetButton(.short)
-            presetButton(.deep)
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 12) {
+                presetButton(.pomodoro)
+                presetButton(.short)
+                presetButton(.deep)
+                if StoreManager.shared.canCustomPresets {
+                    ForEach(customPresets) { preset in
+                        presetButton(preset)
+                    }
+                }
+            }
+            .padding(.horizontal)
         }
         .padding(.bottom, 16)
     }
@@ -150,16 +172,16 @@ struct FocusTimerView: View {
             timer.selectPreset(preset)
         } label: {
             VStack(spacing: 4) {
-                Text(preset.name)
+                Text(verbatim: T(preset.name))
                     .font(.caption.weight(.semibold))
-                Text("\(Int(preset.focusDuration / 60))m")
+                Text(verbatim: "\(Int(preset.focusDuration / 60))\(T("min"))")
                     .font(.caption2)
             }
             .foregroundColor(isSelected ? .white : .primary)
             .padding(.horizontal, 20)
             .padding(.vertical, 10)
             .background(
-                isSelected ? Color.orange : Color(.systemGray6),
+                isSelected ? Color.brand : Color(.systemGray6),
                 in: Capsule()
             )
         }
@@ -171,8 +193,8 @@ struct FocusTimerView: View {
             VStack(spacing: 4) {
                 Text("\(timer.completedPomodorosToday)")
                     .font(.title2.weight(.bold))
-                    .foregroundColor(.orange)
-                Text("Pomodoros")
+                    .foregroundColor(.brand)
+                Text(verbatim: T("Pomodoros"))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -183,8 +205,8 @@ struct FocusTimerView: View {
             VStack(spacing: 4) {
                 Text("\(habits.filter(\.isCompletedToday).count)")
                     .font(.title2.weight(.bold))
-                    .foregroundColor(.orange)
-                Text("Habits Done")
+                    .foregroundColor(.brand)
+                Text(verbatim: T("Habits Done"))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -195,6 +217,38 @@ struct FocusTimerView: View {
                 .fill(.background)
                 .shadow(color: .black.opacity(0.04), radius: 4, y: 1)
         )
+    }
+
+    private var ambientSoundSelector: some View {
+        VStack(spacing: 8) {
+            Text(verbatim: T("Ambient"))
+                .font(.caption.weight(.medium))
+                .foregroundColor(.secondary)
+
+            HStack(spacing: 8) {
+                ForEach(AudioManager.AmbientSound.allCases) { sound in
+                    Button {
+                        audioManager.toggle(sound)
+                    } label: {
+                        VStack(spacing: 4) {
+                            Image(systemName: sound.icon)
+                                .font(.title3)
+                            Text(sound.displayName)
+                                .font(.caption2)
+                        }
+                        .foregroundColor(audioManager.currentSound == sound && audioManager.isPlaying ? .brand : .secondary)
+                        .frame(minWidth: 64)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 10)
+                        .background(
+                            audioManager.currentSound == sound && audioManager.isPlaying ?
+                            Color.brand.opacity(0.12) : Color(.systemGray6),
+                            in: RoundedRectangle(cornerRadius: 10)
+                        )
+                    }
+                }
+            }
+        }
     }
 
     private func markHabitForTimer(_ habit: Habit) {

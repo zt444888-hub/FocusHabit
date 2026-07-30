@@ -1,4 +1,4 @@
-import Foundation
+﻿import Foundation
 import AVFoundation
 
 @MainActor
@@ -13,6 +13,8 @@ final class AudioManager {
     private init() {
         engine = AVAudioEngine()
         playerNode = AVAudioPlayerNode()
+        engine.attach(playerNode)
+        engine.connect(playerNode, to: engine.mainMixerNode, format: nil)
         configureAudioSession()
         NSLog("[FocusHabit Audio] AudioManager initialized with AVAudioEngine")
     }
@@ -38,10 +40,10 @@ final class AudioManager {
         
         var displayName: String {
             switch self {
-            case .rain: String(localized: "Rain")
-            case .ocean: String(localized: "Ocean Waves")
-            case .whitenoise: String(localized: "White Noise")
-            case .forest: String(localized: "Forest")
+            case .rain: T("Rain")
+            case .ocean: T("Ocean Waves")
+            case .whitenoise: T("White Noise")
+            case .forest: T("Forest")
             }
         }
         
@@ -77,15 +79,9 @@ final class AudioManager {
             try audioFile.read(into: buffer)
             NSLog("[FocusHabit Audio] Loaded buffer: %d frames", buffer.frameLength)
             
-            // Re-create player node - keep engine running to avoid overlap
-            playerNode = AVAudioPlayerNode()
-            engine.attach(playerNode)
-            engine.connect(playerNode, to: engine.mainMixerNode, format: format)
-            
-            // Schedule with looping
+            // Schedule with looping on the already-attached player node
             playerNode.scheduleBuffer(buffer, at: nil, options: .loops, completionHandler: nil)
             
-            // Only start engine if not running (keeps running across sound changes)
             if !engine.isRunning {
                 try engine.start()
             }
@@ -104,9 +100,6 @@ final class AudioManager {
     
     func stop() {
         playerNode.stop()
-        if engine.attachedNodes.contains(playerNode) {
-            engine.detach(playerNode)
-        }
         isPlaying = false
         currentSound = nil
         NSLog("[FocusHabit Audio] Stopped")

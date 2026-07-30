@@ -1,7 +1,7 @@
 import Foundation
 
 struct CustomPresetsManager {
-    private static nonisolated(unsafe) let defaults = UserDefaults(suiteName: "group.com.yourapp.FocusHabit") ?? .standard
+    private static nonisolated(unsafe) let defaults = UserDefaults(suiteName: "group.com.a1111.FocusHabit") ?? .standard
     private static let key = "CustomTimerPresets"
 
     static func load() -> [TimerPreset] {

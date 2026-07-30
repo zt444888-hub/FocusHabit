@@ -1,32 +1,36 @@
  import SwiftUI
  import SwiftData
  
- struct ContentView: View {
-     @State private var selectedTab = 0
-     @Environment(\.modelContext) private var context
-     
-     var body: some View {
+struct ContentView: View {
+    @State private var selectedTab = 0
+    @AppStorage("appLanguage") private var appLanguage = ""
+    @AppStorage("darkMode") private var darkMode = false
+    @Environment(\.modelContext) private var context
+    
+    var body: some View {
          TabView(selection: $selectedTab) {
              HabitListView()
                  .tabItem {
-                     Label("Habits", systemImage: "checklist")
+                     Label(T("Habits"), systemImage: "checklist")
                  }
                  .tag(0)
              
              FocusTimerView()
                  .tabItem {
-                     Label("Focus", systemImage: "timer")
+                     Label(T("Focus"), systemImage: "timer")
                  }
                  .tag(1)
              
              SettingsView()
                  .tabItem {
-                     Label("Settings", systemImage: "gear")
+                     Label(T("Settings"), systemImage: "gear")
                  }
                  .tag(2)
-         }
-         .tint(.orange)
-     }
+        }
+        .tint(.brand)
+        .preferredColorScheme(darkMode ? .dark : nil)
+        .id(appLanguage)
+    }
  }
  
  #Preview {

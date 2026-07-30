@@ -19,11 +19,11 @@ struct OnboardingView: View {
                 .padding(.bottom, 24)
 
             // App name
-            Text("FocusHabit Pro")
+            Text(verbatim: T("FocusHabit Pro"))
                 .font(.system(size: 32, weight: .bold, design: .rounded))
                 .foregroundColor(.primary)
 
-            Text("Habit Tracker & Pomodoro Timer")
+            Text(verbatim: T("Habit Tracker & Pomodoro Timer"))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .padding(.bottom, 40)
@@ -37,11 +37,11 @@ struct OnboardingView: View {
 
             // Goal input
             VStack(spacing: 8) {
-                Text("What's your goal?")
+                Text(verbatim: T("What's your goal?"))
                     .font(.headline)
                     .foregroundColor(.primary)
 
-                TextField("e.g. Learn to code, Get fit, Read more", text: $goalInput)
+                TextField(T("e.g. Learn to code, Get fit, Read more"), text: $goalInput)
                     .textFieldStyle(.plain)
                     .padding()
                     .background(
@@ -65,7 +65,7 @@ struct OnboardingView: View {
         }
         dismiss()
     } label: {
-        Text("Get Started")
+        Text(verbatim: T("Get Started"))
                     .font(.headline)
                     .foregroundColor(.white)
                     .frame(maxWidth: 220)
@@ -79,7 +79,7 @@ struct OnboardingView: View {
                 hasSeenOnboarding = true
                 dismiss()
             } label: {
-                Text("Skip")
+                Text(verbatim: T("Skip"))
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }

@@ -2,7 +2,7 @@
 import SwiftData
 
 struct WidgetDataWriter {
-    private static let defaults = UserDefaults(suiteName: "group.com.yourapp.FocusHabit")
+    private static let defaults = UserDefaults(suiteName: "group.com.a1111.FocusHabit")
     private static let key = "todayHabits"
 
     static func updateWidgetData(for habits: [Habit]) {
@@ -16,7 +16,8 @@ struct WidgetDataWriter {
                 isCompleted: h.completions.contains { c in
                     calendar.isDate(c.date, inSameDayAs: today)
                 },
-                streak: h.currentStreak
+                streak: h.currentStreak,
+                weeklyRate: h.weeklyCompletionRate
             )
         }
 

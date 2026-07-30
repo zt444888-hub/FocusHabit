@@ -1,4 +1,4 @@
-import SwiftUI
+﻿import SwiftUI
 import SwiftData
 
 struct HabitDetailView: View {
@@ -10,6 +10,7 @@ struct HabitDetailView: View {
         ScrollView {
             VStack(spacing: 16) {
                 statsHeader
+                freezeCard
                 monthGrid
                 recentRecords
             }
@@ -31,10 +32,13 @@ struct HabitDetailView: View {
     // MARK: - Focus Time
 
     private var totalFocusSeconds: Double {
-        guard let allSessions = try? context.fetch(FetchDescriptor<FocusSession>()) else { return 0 }
-        return allSessions
-            .filter { $0.relatedHabit?.id == habit.id }
-            .reduce(0) { $0 + $1.duration }
+        let habitID = habit.persistentModelID
+        let predicate = #Predicate<FocusSession> { session in
+            session.relatedHabit?.persistentModelID == habitID
+        }
+        let descriptor = FetchDescriptor(predicate: predicate)
+        guard let sessions = try? context.fetch(descriptor) else { return 0 }
+        return sessions.reduce(0) { $0 + $1.duration }
     }
 
     private var formattedFocusTime: String {
@@ -58,7 +62,7 @@ struct HabitDetailView: View {
                         .font(.system(size: 36, weight: .bold, design: .rounded))
                         .foregroundColor(.primary)
                 }
-                Text("day streak")
+                Text(verbatim: T("day streak"))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -79,7 +83,7 @@ struct HabitDetailView: View {
                         .font(.caption.weight(.bold))
                         .foregroundColor(.brand)
                 }
-                Text("weekly")
+                Text(verbatim: T("weekly"))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -90,7 +94,7 @@ struct HabitDetailView: View {
                 Text("\(habit.totalCompletions)")
                     .font(.system(size: 36, weight: .bold, design: .rounded))
                     .foregroundColor(.primary)
-                Text("total")
+                Text(verbatim: T("total"))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -101,7 +105,7 @@ struct HabitDetailView: View {
                 Text(formattedFocusTime)
                     .font(.system(size: 20, weight: .bold, design: .rounded))
                     .foregroundColor(.primary)
-                Text("focus")
+                Text(verbatim: T("focus"))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -125,21 +129,21 @@ struct HabitDetailView: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 if let d = habit.lastFreezeDate, Calendar.current.isDateInToday(d) {
-                    Text("Today frozen")
+                    Text(verbatim: T("Today frozen"))
                         .font(.subheadline.weight(.medium))
-                    Text("Streak protected")
+                    Text(verbatim: T("Streak protected"))
                         .font(.caption)
                         .foregroundColor(.secondary)
                 } else if habit.freezeBalance > 0 {
-                    Text("Use a freeze")
+                    Text(verbatim: T("Use a freeze"))
                         .font(.subheadline.weight(.medium))
                     Text("\(habit.freezeBalance) remaining this month")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 } else {
-                    Text("No freezes left")
+                    Text(verbatim: T("No freezes left"))
                         .font(.subheadline.weight(.medium))
-                    Text("Resets next month")
+                    Text(verbatim: T("Resets next month"))
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -172,7 +176,7 @@ struct HabitDetailView: View {
         let days: [Date] = (0..<35).compactMap { calendar.date(byAdding: .day, value: -$0, to: today) }.reversed()
 
         return VStack(alignment: .leading, spacing: 12) {
-            Text("Last 35 Days")
+            Text(verbatim: T("Last 35 Days"))
                 .font(.subheadline.weight(.semibold))
                 .foregroundColor(.secondary)
 
@@ -226,7 +230,7 @@ struct HabitDetailView: View {
 
     private var recentRecords: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("Recent Records")
+            Text(verbatim: T("Recent Records"))
                 .font(.subheadline.weight(.semibold))
                 .foregroundColor(.secondary)
                 .padding(.bottom, 12)
@@ -234,7 +238,7 @@ struct HabitDetailView: View {
             if sortedCompletions.isEmpty {
                 HStack {
                     Spacer()
-                    Text("No records yet")
+                    Text(verbatim: T("No records yet"))
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                         .padding(.vertical, 20)

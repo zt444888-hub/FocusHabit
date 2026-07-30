@@ -1,0 +1,14 @@
+{
+  "identifier" : "FOCUSHABIT_PREMIUM_CONFIG",
+  "nonConsumables" : [
+    {
+      "description" : "Lifetime access to FocusHabit Premium - unlimited habits, custom presets, weekly reports",
+      "displayPrice" : "2.99",
+      "familyShareable" : false,
+      "productID" : "com.a1111.FocusHabit.premium.lifetime",
+      "referenceName" : "FocusHabit Premium Lifetime",
+      "type" : "nonConsumable"
+    }
+  ],
+  "version" : 1
+}

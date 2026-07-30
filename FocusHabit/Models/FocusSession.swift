@@ -9,7 +9,6 @@ final class FocusSession {
     var presetName: String           // 使用的预设名
     var startTime: Date
     var endTime: Date
-    @Relationship
     var relatedHabit: Habit?         // 关联习惯，显式关系让 SwiftData 匹配逆关系
 
     init(

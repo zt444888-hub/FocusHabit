@@ -1,9 +1,11 @@
 ﻿import Foundation
+import AudioToolbox
 import UIKit
 
 @Observable
 @MainActor
 final class TimerManager {
+    static let shared = TimerManager()
     var state: TimerState = .idle
     var timeRemaining: TimeInterval = 1500
     var currentPreset: TimerPreset = .pomodoro
@@ -16,7 +18,9 @@ final class TimerManager {
     }
 
     private var timer: Timer?
-    private static let pomodorosDefaults = UserDefaults(suiteName: "group.com.yourapp.FocusHabit") ?? .standard
+    private var backgroundTime: Date?
+    private var timeAtBackground: TimeInterval = 0
+    private static let pomodorosDefaults = UserDefaults(suiteName: "group.com.a1111.FocusHabit") ?? .standard
 
     var progress: Double {
         guard totalTime > 0 else { return 0 }
@@ -43,14 +47,18 @@ final class TimerManager {
     func start() {
         guard state == .idle || state == .paused else { return }
         state = .running
+        UIApplication.shared.isIdleTimerDisabled = true
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
-            self?.tick()
+            Task { @MainActor in
+                self?.tick()
+            }
         }
     }
 
     func pause() {
         guard state == .running else { return }
         state = .paused
+        UIApplication.shared.isIdleTimerDisabled = false
         timer?.invalidate()
         timer = nil
     }
@@ -58,6 +66,7 @@ final class TimerManager {
     func reset() {
         timer?.invalidate()
         timer = nil
+        UIApplication.shared.isIdleTimerDisabled = false
         state = .idle
         timeRemaining = currentPreset.focusDuration
         totalTime = currentPreset.focusDuration
@@ -66,6 +75,7 @@ final class TimerManager {
     func skipBreak() {
         timer?.invalidate()
         timer = nil
+        UIApplication.shared.isIdleTimerDisabled = false
         timeRemaining = currentPreset.focusDuration
         totalTime = currentPreset.focusDuration
         state = .idle
@@ -73,9 +83,26 @@ final class TimerManager {
 
     /// Called from SwiftUI environment(\.scenePhase) when app enters background
     func handleAppBackground() {
-        // Pause the timer when the user leaves the app — prevents cheating and saves state
-        if state == .running {
-            pause()
+        guard state == .running else { return }
+        timer?.invalidate()
+        timer = nil
+        backgroundTime = Date()
+        timeAtBackground = timeRemaining
+    }
+
+    func handleAppForeground() {
+        guard let bgTime = backgroundTime, state == .running else { return }
+        let elapsed = Date().timeIntervalSince(bgTime)
+        timeRemaining = max(0, timeAtBackground - elapsed)
+        backgroundTime = nil
+        if timeRemaining <= 0 {
+            completeCurrentSession()
+        } else {
+            timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+                Task { @MainActor in
+                    self?.tick()
+                }
+            }
         }
     }
 
@@ -83,21 +110,27 @@ final class TimerManager {
         guard timeRemaining > 0 else {
             timer?.invalidate()
             timer = nil
-            let wasFocus = totalTime == currentPreset.focusDuration
-            if wasFocus {
-                completedPomodorosToday += 1
-                state = .finished(sessionType: .focus)
-                timeRemaining = currentPreset.breakDuration
-                totalTime = currentPreset.breakDuration
-            } else {
-                state = .finished(sessionType: .break)
-                timeRemaining = currentPreset.focusDuration
-                totalTime = currentPreset.focusDuration
-            }
-            playSound()
+            completeCurrentSession()
             return
         }
         timeRemaining -= 1
+    }
+
+    private func completeCurrentSession() {
+        UIApplication.shared.isIdleTimerDisabled = false
+        let wasFocus = totalTime == currentPreset.focusDuration
+        if wasFocus {
+            completedPomodorosToday += 1
+            scheduleCompletionNotification()
+            state = .finished(sessionType: .focus)
+            timeRemaining = currentPreset.breakDuration
+            totalTime = currentPreset.breakDuration
+        } else {
+            state = .finished(sessionType: .break)
+            timeRemaining = currentPreset.focusDuration
+            totalTime = currentPreset.focusDuration
+        }
+        playSound()
     }
 
     func startNextFocus() {
@@ -106,7 +139,17 @@ final class TimerManager {
         state = .idle
         timeRemaining = currentPreset.focusDuration
         totalTime = currentPreset.focusDuration
+        UIApplication.shared.isIdleTimerDisabled = true
         start()
+    }
+
+    private func scheduleCompletionNotification() {
+        let content = UNMutableNotificationContent()
+        content.title = "Focus Session Complete!"
+        content.body = "Great job! Time for a break."
+        content.sound = .default
+        let request = UNNotificationRequest(identifier: "focus-complete", content: content, trigger: nil)
+        UNUserNotificationCenter.current().add(request)
     }
 
     private func playSound() {

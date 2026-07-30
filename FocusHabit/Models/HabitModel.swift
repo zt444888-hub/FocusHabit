@@ -10,17 +10,36 @@ final class Habit {
     var reminderTime: Date?
     var isArchived: Bool
     var sortOrder: Int
+    var targetDaysPerWeek: Int
+    var colorName: String
+    var iconName: String
+    var canRepeatDaily: Bool
+    var lastFreezeDate: Date?
+    var freezeBalance: Int
 
     @Relationship(deleteRule: .cascade)
     var completions: [HabitCompletion] = []
 
-    init(name: String, frequency: Frequency = .daily, reminderTime: Date? = nil, sortOrder: Int = 0) {
+    init(name: String, frequency: Frequency = .daily, reminderTime: Date? = nil, sortOrder: Int = 0, targetDaysPerWeek: Int = 7, colorName: String = "brand", iconName: String = "checklist", canRepeatDaily: Bool = false) {
         self.name = name
         self.createdAt = Date()
         self.frequency = frequency
         self.reminderTime = reminderTime
         self.isArchived = false
         self.sortOrder = sortOrder
+        self.targetDaysPerWeek = targetDaysPerWeek
+        self.colorName = colorName
+        self.iconName = iconName
+        self.canRepeatDaily = canRepeatDaily
+        self.lastFreezeDate = nil
+        self.freezeBalance = 3
+    }
+
+    func freezeToday() {
+        if let d = lastFreezeDate, Calendar.current.isDateInToday(d) { return }
+        guard freezeBalance > 0 else { return }
+        lastFreezeDate = Date()
+        freezeBalance -= 1
     }
 
     var currentStreak: Int {
@@ -44,8 +63,12 @@ final class Habit {
     }
 
     var isCompletedToday: Bool {
+        todayCompletionCount > 0
+    }
+
+    var todayCompletionCount: Int {
         let today = Calendar.current.startOfDay(for: Date())
-        return completions.contains { Calendar.current.startOfDay(for: $0.date) == today && $0.isCompleted }
+        return completions.filter { Calendar.current.startOfDay(for: $0.date) == today && $0.isCompleted }.count
     }
 
     /// Rate of completion over the last frequency period (e.g. 7 days for daily, 1 for weekly)

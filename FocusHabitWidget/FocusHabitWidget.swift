@@ -7,7 +7,7 @@ struct HabitEntry: TimelineEntry {
 }
 
 struct Provider: TimelineProvider {
-     let defaults = UserDefaults(suiteName: "group.com.yourapp.FocusHabit")
+     let defaults = UserDefaults(suiteName: "group.com.a1111.FocusHabit")
      
      func placeholder(in context: Context) -> HabitEntry {
          HabitEntry(date: Date(), habits: [

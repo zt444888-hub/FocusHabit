@@ -109,7 +109,6 @@ struct ReportView: View {
     }
 
     private func completionRate(in range: ClosedRange<Date>) -> Double {
-        let calendar = Calendar.current
         var expected = 0, actual = 0
         for habit in activeHabits {
             let perWeek: Int = {
@@ -294,5 +293,4 @@ private struct StatItem: View {
         .frame(maxWidth: .infinity)
     }
 }
-
 

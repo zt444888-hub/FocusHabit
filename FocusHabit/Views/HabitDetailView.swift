@@ -1,9 +1,10 @@
-﻿import SwiftUI
+import SwiftUI
 import SwiftData
 
 struct HabitDetailView: View {
     let habit: Habit
     @Environment(\.modelContext) private var context
+    @Environment(\.dismiss) private var dismiss
     @State private var showEditSheet = false
 
     var body: some View {
@@ -20,8 +21,16 @@ struct HabitDetailView: View {
         .navigationTitle(habit.name)
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button("Edit") { showEditSheet = true }
+            ToolbarItemGroup(placement: .topBarTrailing) {
+                Button(T("Edit")) { showEditSheet = true }
+                Button {
+                    habit.isArchived = true
+                    try? context.save()
+                    dismiss()
+                } label: {
+                    Image(systemName: "archivebox")
+                }
+                .accessibilityLabel(T("Archive"))
             }
         }
         .sheet(isPresented: $showEditSheet) {
@@ -31,20 +40,13 @@ struct HabitDetailView: View {
 
     // MARK: - Focus Time
 
-    private var totalFocusSeconds: Double {
-        let habitID = habit.persistentModelID
-        let predicate = #Predicate<FocusSession> { session in
-            session.relatedHabit?.persistentModelID == habitID
-        }
-        let descriptor = FetchDescriptor(predicate: predicate)
-        guard let sessions = try? context.fetch(descriptor) else { return 0 }
-        return sessions.reduce(0) { $0 + $1.duration }
-    }
-
     private var formattedFocusTime: String {
-        let hours = Int(totalFocusSeconds) / 3600
-        let minutes = (Int(totalFocusSeconds) % 3600) / 60
-        if hours > 0 { return "\(hours)h \(minutes)m" }
+        let minutes = habit.focusMinutes
+        if minutes >= 60 {
+            let hours = minutes / 60
+            let remaining = minutes % 60
+            return remaining > 0 ? "\(hours)h \(remaining)m" : "\(hours)h"
+        }
         return "\(minutes)m"
     }
 
@@ -137,7 +139,7 @@ struct HabitDetailView: View {
                 } else if habit.freezeBalance > 0 {
                     Text(verbatim: T("Use a freeze"))
                         .font(.subheadline.weight(.medium))
-                    Text("\(habit.freezeBalance) remaining this month")
+                    Text(String(format: T("%d remaining this month"), habit.freezeBalance))
                         .font(.caption)
                         .foregroundColor(.secondary)
                 } else {
@@ -152,7 +154,7 @@ struct HabitDetailView: View {
             Spacer()
 
             if (habit.lastFreezeDate.map { !Calendar.current.isDateInToday($0) } ?? true) && habit.freezeBalance > 0 {
-                Button("Freeze") {
+                Button(T("Freeze")) {
                     habit.freezeToday()
                     try? context.save()
                 }

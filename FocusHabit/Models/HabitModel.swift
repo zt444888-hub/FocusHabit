@@ -14,13 +14,14 @@ final class Habit {
     var colorName: String
     var iconName: String
     var canRepeatDaily: Bool
+    var focusMinutes: Int = 25
     var lastFreezeDate: Date?
     var freezeBalance: Int
 
     @Relationship(deleteRule: .cascade)
     var completions: [HabitCompletion] = []
 
-    init(name: String, frequency: Frequency = .daily, reminderTime: Date? = nil, sortOrder: Int = 0, targetDaysPerWeek: Int = 7, colorName: String = "brand", iconName: String = "checklist", canRepeatDaily: Bool = false) {
+    init(name: String, frequency: Frequency = .daily, reminderTime: Date? = nil, sortOrder: Int = 0, targetDaysPerWeek: Int = 7, colorName: String = "brand", iconName: String = "checklist", canRepeatDaily: Bool = false, focusMinutes: Int = 25) {
         self.name = name
         self.createdAt = Date()
         self.frequency = frequency
@@ -31,6 +32,7 @@ final class Habit {
         self.colorName = colorName
         self.iconName = iconName
         self.canRepeatDaily = canRepeatDaily
+        self.focusMinutes = focusMinutes
         self.lastFreezeDate = nil
         self.freezeBalance = 3
     }
@@ -44,18 +46,18 @@ final class Habit {
 
     var currentStreak: Int {
         let calendar = Calendar.current
-        let sortedDates = completions
+        // 用 Set 去重：同一天多次打卡只算 1 天，连续次数按天累计
+        let completedDays = Set(completions
             .filter(\.isCompleted)
-            .map { calendar.startOfDay(for: $0.date) }
-            .sorted(by: >)
-        guard !sortedDates.isEmpty else { return 0 }
+            .map { calendar.startOfDay(for: $0.date) })
+        guard !completedDays.isEmpty else { return 0 }
         var streak = 0
         let today = calendar.startOfDay(for: Date())
         var checkDate = today
-        if !sortedDates.contains(today) {
+        if !completedDays.contains(today) {
             checkDate = calendar.date(byAdding: .day, value: -1, to: today) ?? today
         }
-        while sortedDates.contains(checkDate) {
+        while completedDays.contains(checkDate) {
             streak += 1
             checkDate = calendar.date(byAdding: .day, value: -1, to: checkDate) ?? checkDate
         }
@@ -142,4 +144,3 @@ enum SessionType: Equatable {
     case focus
     case `break`
 }
-

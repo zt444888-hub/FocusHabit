@@ -1,4 +1,5 @@
 import SwiftUI
+import WatchKit
 
 struct TimerView: View {
     @State private var timeRemaining: TimeInterval = 1500

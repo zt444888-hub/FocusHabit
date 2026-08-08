@@ -13,7 +13,7 @@
          guard let reminderTime = habit.reminderTime else { return }
          let content = UNMutableNotificationContent()
          content.title = habit.name
-         content.body = "Don't forget your habit today!"
+         content.body = T("Don't forget your habit today!")
          content.sound = .default
          
          let calendar = Calendar.current

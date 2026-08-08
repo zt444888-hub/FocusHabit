@@ -1,4 +1,4 @@
-﻿ import SwiftUI
+ import SwiftUI
  import SwiftData
  
  struct AddHabitView: View {
@@ -13,7 +13,8 @@
     @State private var selectedColor = "brand"
     @State private var selectedIcon = "checklist"
     @State private var canRepeatDaily = false
-     @State private var reminderTime = Date()
+    @State private var focusMinutes = 25
+    @State private var reminderTime = Date()
     @Query(filter: #Predicate<Habit> { !$0.isArchived })
     private var activeHabits: [Habit]
     @State private var showPaywall = false
@@ -29,6 +30,7 @@
              _selectedIcon = State(initialValue: h.iconName)
              _targetDaysPerWeek = State(initialValue: h.targetDaysPerWeek)
              _canRepeatDaily = State(initialValue: h.canRepeatDaily)
+             _focusMinutes = State(initialValue: h.focusMinutes)
              if h.reminderTime != nil {
                  _hasReminder = State(initialValue: true)
                  _reminderTime = State(initialValue: h.reminderTime!)
@@ -95,12 +97,16 @@
                      .buttonStyle(.borderless)
                  }
 
-                 Section(T("Weekly Goal")) {
-                     Stepper("\(targetDaysPerWeek) days / week", value: $targetDaysPerWeek, in: 1...7)
-                 }
+                Section(T("Weekly Goal")) {
+                    Stepper("\(targetDaysPerWeek) days / week", value: $targetDaysPerWeek, in: 1...7)
+                }
 
-                 Section {
-                     Toggle(T("Allow multiple daily completions"), isOn: $canRepeatDaily)
+                Section(T("Focus Time")) {
+                    Stepper("\(focusMinutes) min", value: $focusMinutes, in: 5...120, step: 5)
+                }
+
+                Section {
+                    Toggle(T("Allow multiple daily completions"), isOn: $canRepeatDaily)
                  } header: {
                      Text(verbatim: T("Repeat"))
                  }
@@ -141,8 +147,10 @@
              existing.colorName = selectedColor
              existing.iconName = selectedIcon
              existing.canRepeatDaily = canRepeatDaily
+             existing.focusMinutes = focusMinutes
              if hasReminder {
                  existing.reminderTime = reminderTime
+                 NotificationManager.requestAuthorization()
                  NotificationManager.scheduleHabitReminder(for: existing)
              } else {
                  if existing.reminderTime != nil {
@@ -157,14 +165,14 @@
              }
              let newHabit = Habit(name: trimmed, frequency: frequency,
                                   reminderTime: hasReminder ? reminderTime : nil,
-                                  sortOrder: 0, targetDaysPerWeek: targetDaysPerWeek, colorName: selectedColor, iconName: selectedIcon, canRepeatDaily: canRepeatDaily)
+                                  sortOrder: 0, targetDaysPerWeek: targetDaysPerWeek, colorName: selectedColor, iconName: selectedIcon, canRepeatDaily: canRepeatDaily, focusMinutes: focusMinutes)
              context.insert(newHabit)
             try? context.save()
              if hasReminder {
+                 NotificationManager.requestAuthorization()
                  NotificationManager.scheduleHabitReminder(for: newHabit)
              }
          }
          dismiss()
      }
  }
-

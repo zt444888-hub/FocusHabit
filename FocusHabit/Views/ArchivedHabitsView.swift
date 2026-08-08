@@ -6,6 +6,7 @@ struct ArchivedHabitsView: View {
     private var habits: [Habit]
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
+    @State private var selectedHabit: Habit?
 
     var body: some View {
         NavigationStack {
@@ -18,7 +19,7 @@ struct ArchivedHabitsView: View {
                         VStack(alignment: .leading) {
                             Text(habit.name)
                                 .font(.headline)
-                            Text("\(habit.totalCompletions) completions")
+                            Text(String(format: T("%d completions"), habit.totalCompletions))
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -29,16 +30,30 @@ struct ArchivedHabitsView: View {
                         }
                         .font(.caption)
                         .foregroundColor(.brand)
+                        .buttonStyle(.borderless)
+                    }
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        selectedHabit = habit
                     }
                 }
                 .onDelete { indexSet in
                     for i in indexSet {
-                        context.delete(habits[i])
+                        let habit = habits[i]
+                        if let sessions = try? context.fetch(FetchDescriptor<FocusSession>()) {
+                            for session in sessions where session.relatedHabit?.persistentModelID == habit.persistentModelID {
+                                session.relatedHabit = nil
+                            }
+                        }
+                        context.delete(habit)
                     }
                     try? context.save()
                 }
             }
             .navigationTitle(T("Archived Habits"))
+            .navigationDestination(item: $selectedHabit) { habit in
+                HabitDetailView(habit: habit)
+            }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(T("Close")) { dismiss() }

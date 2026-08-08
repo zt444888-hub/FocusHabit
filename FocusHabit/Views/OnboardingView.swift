@@ -4,9 +4,6 @@ import SwiftData
 struct OnboardingView: View {
     @Environment(\.dismiss) private var dismiss
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
-    @AppStorage("userGoal") private var userGoal = ""
-    @State private var goalInput = ""
-    @State private var showContent = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -35,37 +32,12 @@ struct OnboardingView: View {
                 .cornerRadius(1.5)
                 .padding(.bottom, 32)
 
-            // Goal input
-            VStack(spacing: 8) {
-                Text(verbatim: T("What's your goal?"))
-                    .font(.headline)
-                    .foregroundColor(.primary)
-
-                TextField(T("e.g. Learn to code, Get fit, Read more"), text: $goalInput)
-                    .textFieldStyle(.plain)
-                    .padding()
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color(.systemGray6))
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.brand.opacity(0.3), lineWidth: 1)
-                    )
-                    .padding(.horizontal, 40)
-                    .autocapitalization(.sentences)
-            }
-            .padding(.bottom, 32)
-
             // Get Started button
-    Button {
-        hasSeenOnboarding = true
-        if !goalInput.trimmingCharacters(in: .whitespaces).isEmpty {
-            userGoal = goalInput.trimmingCharacters(in: .whitespaces)
-        }
-        dismiss()
-    } label: {
-        Text(verbatim: T("Get Started"))
+            Button {
+                hasSeenOnboarding = true
+                dismiss()
+            } label: {
+                Text(verbatim: T("Get Started"))
                     .font(.headline)
                     .foregroundColor(.white)
                     .frame(maxWidth: 220)

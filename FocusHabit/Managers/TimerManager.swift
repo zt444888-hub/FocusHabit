@@ -38,10 +38,15 @@ final class TimerManager {
     }
 
     func selectPreset(_ preset: TimerPreset) {
-        guard state == .idle else { return }
-        currentPreset = preset
-        timeRemaining = preset.focusDuration
-        totalTime = preset.focusDuration
+        // 空闲或一轮结束（休息/准备下一轮）时允许切换预设
+        switch state {
+        case .idle, .finished:
+            currentPreset = preset
+            timeRemaining = preset.focusDuration
+            totalTime = preset.focusDuration
+        case .running, .paused:
+            break
+        }
     }
 
     func start() {
@@ -145,8 +150,8 @@ final class TimerManager {
 
     private func scheduleCompletionNotification() {
         let content = UNMutableNotificationContent()
-        content.title = "Focus Session Complete!"
-        content.body = "Great job! Time for a break."
+        content.title = T("Focus Session Complete!")
+        content.body = T("Great job! Time for a break.")
         content.sound = .default
         let request = UNNotificationRequest(identifier: "focus-complete", content: content, trigger: nil)
         UNUserNotificationCenter.current().add(request)

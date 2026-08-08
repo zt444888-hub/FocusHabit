@@ -1,4 +1,4 @@
-﻿import SwiftUI
+import SwiftUI
 import SwiftData
 
 struct SettingsView: View {
@@ -105,9 +105,30 @@ struct SettingsView: View {
                 }
 
                 Section {
-                    Toggle(T("Show Archived Habits"), isOn: $showArchived)
+                    Button {
+                        showArchived = true
+                    } label: {
+                        HStack {
+                            Label(T("Show Archived Habits"), systemImage: "archivebox")
+                                .foregroundColor(.primary)
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
                 } header: {
                     Text(verbatim: T("Habits"))
+                }
+
+                Section {
+                    Button(role: .destructive) {
+                        showResetAlert = true
+                    } label: {
+                        Label(T("Reset All Data"), systemImage: "trash")
+                    }
+                } header: {
+                    Text(verbatim: T("Data"))
                 }
 
                 Section(T("Appearance")) {
@@ -140,11 +161,11 @@ struct SettingsView: View {
                     HStack {
                         Text(verbatim: T("Version"))
                         Spacer()
-                        Text(verbatim: T("1.0"))
+                        Text(verbatim: T("2.0"))
                             .foregroundColor(.secondary)
                     }
 
-                    Link(destination: URL(string: "https://apps.apple.com/app/idXXXXXXXXX?action=write-review")!) {
+                    Link(destination: AppStoreConfig.reviewURL) {
                         HStack {
                             Label(T("Rate on App Store"), systemImage: "star")
                             Spacer()

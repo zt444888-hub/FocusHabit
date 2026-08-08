@@ -28,7 +28,7 @@ struct ContentView: View {
                  .tag(2)
         }
         .tint(.brand)
-        .preferredColorScheme(darkMode ? .dark : nil)
+        .preferredColorScheme(darkMode ? .dark : .light)
         .id(appLanguage)
     }
  }

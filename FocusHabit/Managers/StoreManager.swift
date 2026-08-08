@@ -11,7 +11,7 @@ final class StoreManager {
     private(set) var isLoading = false
     private(set) var errorMessage: String?
 
-    let lifetimeID = "com.a1111.FocusHabit.premium.lifetime"
+    let lifetimeID = "com.a1111.FocusHabit.premium.lifetime2"
 
     private nonisolated(unsafe) var updateListenerTask: Task<Void, Error>?
 
@@ -41,9 +41,12 @@ final class StoreManager {
             let result = try await product.purchase()
             switch result {
             case .success(let verification):
-                if case .verified(let transaction) = verification {
+                switch verification {
+                case .verified(let transaction):
                     await transaction.finish()
                     await checkEntitlements()
+                case .unverified:
+                    errorMessage = T("Purchase verification failed. Please try again.")
                 }
             case .userCancelled, .pending:
                 break
@@ -59,12 +62,9 @@ final class StoreManager {
     func restorePurchases() async {
         isLoading = true
         errorMessage = nil
-        do {
-            try await AppStore.sync()
-            await checkEntitlements()
-        } catch {
-            errorMessage = error.localizedDescription
-        }
+        // 非消耗型内购的购买记录会自动出现在 Transaction.currentEntitlements 中，
+        // 无需调用 AppStore.sync() 弹窗验证 Apple 账户。
+        await checkEntitlements()
         isLoading = false
     }
 
@@ -85,8 +85,6 @@ final class StoreManager {
     var maxFreeHabits: Int { 3 }
     var canUnlimitedHabits: Bool { isPremium }
     var canCustomPresets: Bool { isPremium }
-    var canAmbientSounds: Bool { isPremium }
-    var canAllPresets: Bool { isPremium }
     var canReports: Bool { isPremium }
 
     private func listenForTransactions() -> Task<Void, Error> {

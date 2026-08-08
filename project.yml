@@ -18,6 +18,7 @@ targets:
       - FocusHabit/Managers
       - FocusHabit/Resources
       - FocusHabit/Assets.xcassets
+      - FocusHabit/PrivacyInfo.xcprivacy
       - FocusHabit/FocusHabitApp.swift
       - FocusHabit/Theme.swift
       - Shared
@@ -27,11 +28,11 @@ targets:
         CFBundleDisplayName: FocusHabit Pro
         CFBundlePackageType: APPL
         CFBundleShortVersionString: "2.0"
-        CFBundleVersion: "2"
+        CFBundleVersion: "5"
         LSRequiresIPhoneOS: true
         UILaunchScreen: {}
         UIBackgroundModes: [audio]
-        UIRequiredDeviceCapabilities: [armv7]
+        UIRequiredDeviceCapabilities: [arm64]
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
         UISupportedInterfaceOrientations~ipad:
@@ -60,6 +61,7 @@ targets:
     sources:
       - FocusHabitWidget
       - FocusHabit/Assets.xcassets
+      - FocusHabit/PrivacyInfo.xcprivacy
       - Shared
       - FocusHabit/Theme.swift
     info:
@@ -68,7 +70,7 @@ targets:
         CFBundleDisplayName: FocusHabit Pro Widget
         CFBundlePackageType: XPC!
         CFBundleShortVersionString: "2.0"
-        CFBundleVersion: "2"
+        CFBundleVersion: "5"
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     settings:

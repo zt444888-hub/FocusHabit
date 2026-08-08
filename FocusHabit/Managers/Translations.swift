@@ -1210,13 +1210,208 @@ let translations: [String: [String: String]] = [
     "de": "FocusHabit",
     "ko": "FocusHabit"
   ],
-  "1.0": [
-    "en": "1.0",
-    "zh-Hans": "1.0",
-    "ja": "1.0",
-    "fr": "1.0",
-    "es": "1.0",
-    "de": "1.0",
-    "ko": "1.0"
+  "2.0": [
+    "en": "2.0",
+    "zh-Hans": "2.0",
+    "ja": "2.0",
+    "fr": "2.0",
+    "es": "2.0",
+    "de": "2.0",
+    "ko": "2.0"
+  ],
+
+  "Focus Time": [
+    "en": "Focus Time",
+    "zh-Hans": "专注时间",
+    "ja": "集中時間",
+    "fr": "Temps de concentration",
+    "es": "Tiempo de enfoque",
+    "de": "Fokuszeit",
+    "ko": "집중 시간"
+  ],
+
+  "Archive": [
+    "en": "Archive",
+    "zh-Hans": "归档",
+    "ja": "アーカイブ",
+    "fr": "Archiver",
+    "es": "Archivar",
+    "de": "Archivieren",
+    "ko": "보관"
+  ],
+
+  "Reset All Data": [
+    "en": "Reset All Data",
+    "zh-Hans": "重置所有数据",
+    "ja": "すべてのデータをリセット",
+    "fr": "Réinitialiser toutes les données",
+    "es": "Restablecer todos los datos",
+    "de": "Alle Daten zurücksetzen",
+    "ko": "모든 데이터 초기화"
+  ],
+
+  "Unlimited habits (free: 3 max)": [
+    "en": "Unlimited habits (free: 3 max)",
+    "zh-Hans": "无限习惯（免费版最多 3 个）",
+    "ja": "無制限の習慣（無料版は最大3つ）",
+    "fr": "Habitudes illimitées (gratuit : 3 max)",
+    "es": "Hábitos ilimitados (gratis: 3 máx.)",
+    "de": "Unbegrenzte Gewohnheiten (kostenlos: max. 3)",
+    "ko": "무제한 습관 (무료: 최대 3개)"
+  ],
+  "Custom timer presets": [
+    "en": "Custom timer presets",
+    "zh-Hans": "自定义计时预设",
+    "ja": "カスタムタイマープリセット",
+    "fr": "Préréglages de minuteur personnalisés",
+    "es": "Ajustes predefinidos de temporizador",
+    "de": "Benutzerdefinierte Timer-Voreinstellungen",
+    "ko": "사용자 정의 타이머 프리셋"
+  ],
+  "Weekly reports & analytics": [
+    "en": "Weekly reports & analytics",
+    "zh-Hans": "周报与分析",
+    "ja": "週間レポートと分析",
+    "fr": "Rapports hebdomadaires et analyses",
+    "es": "Informes semanales y análisis",
+    "de": "Wochenberichte und Analysen",
+    "ko": "주간 보고서 및 분석"
+  ],
+  "No ads, no tracking": [
+    "en": "No ads, no tracking",
+    "zh-Hans": "无广告、无追踪",
+    "ja": "広告なし・トラッキングなし",
+    "fr": "Sans publicité, sans suivi",
+    "es": "Sin anuncios, sin seguimiento",
+    "de": "Keine Werbung, kein Tracking",
+    "ko": "광고 없음, 추적 없음"
+  ],
+  "Premium restored!": [
+    "en": "Premium restored!",
+    "zh-Hans": "高级版已恢复！",
+    "ja": "プレミアムを復元しました！",
+    "fr": "Premium restauré !",
+    "es": "¡Premium restaurado!",
+    "de": "Premium wiederhergestellt!",
+    "ko": "프리미엄이 복원되었습니다!"
+  ],
+  "No purchase found to restore.": [
+    "en": "No purchase found to restore.",
+    "zh-Hans": "没有找到可恢复的购买。",
+    "ja": "復元できる購入が見つかりません。",
+    "fr": "Aucun achat à restaurer.",
+    "es": "No se encontró ninguna compra para restaurar.",
+    "de": "Kein Kauf zum Wiederherstellen gefunden.",
+    "ko": "복원할 구매 내역이 없습니다."
+  ],
+  "Purchase verification failed. Please try again.": [
+    "en": "Purchase verification failed. Please try again.",
+    "zh-Hans": "购买验证失败，请重试。",
+    "ja": "購入の検証に失敗しました。もう一度お試しください。",
+    "fr": "Échec de la vérification de l'achat. Veuillez réessayer.",
+    "es": "Error al verificar la compra. Inténtalo de nuevo.",
+    "de": "Kaufverifizierung fehlgeschlagen. Bitte erneut versuchen.",
+    "ko": "구매 확인에 실패했습니다. 다시 시도해 주세요."
+  ],
+
+  "Focus Session Complete!": [
+    "en": "Focus Session Complete!",
+    "zh-Hans": "专注完成！",
+    "ja": "集中セッション完了！",
+    "fr": "Séance de concentration terminée !",
+    "es": "¡Sesión de enfoque completada!",
+    "de": "Fokussitzung abgeschlossen!",
+    "ko": "집중 세션 완료!"
+  ],
+  "Great job! Time for a break.": [
+    "en": "Great job! Time for a break.",
+    "zh-Hans": "太棒了！该休息一下了。",
+    "ja": "お疲れ様です！休憩しましょう。",
+    "fr": "Excellent travail ! C'est l'heure de la pause.",
+    "es": "¡Buen trabajo! Es hora de descansar.",
+    "de": "Gut gemacht! Zeit für eine Pause.",
+    "ko": "잘했어요! 휴식할 시간입니다."
+  ],
+  "Don't forget your habit today!": [
+    "en": "Don't forget your habit today!",
+    "zh-Hans": "别忘了今天打卡！",
+    "ja": "今日の習慣を忘れずに！",
+    "fr": "N'oubliez pas votre habitude aujourd'hui !",
+    "es": "¡No olvides tu hábito hoy!",
+    "de": "Vergiss deine Gewohnheit heute nicht!",
+    "ko": "오늘 습관을 잊지 마세요!"
+  ],
+  "Freeze": [
+    "en": "Freeze",
+    "zh-Hans": "冻结",
+    "ja": "フリーズ",
+    "fr": "Geler",
+    "es": "Congelar",
+    "de": "Einfrieren",
+    "ko": "프리즈"
+  ],
+  "%d remaining this month": [
+    "en": "%d remaining this month",
+    "zh-Hans": "本月剩余 %d 次",
+    "ja": "今月あと%d回",
+    "fr": "%d restant ce mois-ci",
+    "es": "%d restantes este mes",
+    "de": "%d verbleibend diesen Monat",
+    "ko": "이번 달 %d회 남음"
+  ],
+  "%dmin focus / %dmin break": [
+    "en": "%dmin focus / %dmin break",
+    "zh-Hans": "专注 %d 分钟 / 休息 %d 分钟",
+    "ja": "集中%d分 / 休憩%d分",
+    "fr": "%d min focus / %d min pause",
+    "es": "%d min enfoque / %d min descanso",
+    "de": "%d Min. Fokus / %d Min. Pause",
+    "ko": "%d분 집중 / %d분 휴식"
+  ],
+  "%d completions": [
+    "en": "%d completions",
+    "zh-Hans": "%d 次打卡",
+    "ja": "%d回の完了",
+    "fr": "%d complétions",
+    "es": "%d completados",
+    "de": "%d Abschlüsse",
+    "ko": "%d회 완료"
+  ],
+  "%d habits": [
+    "en": "%d habits",
+    "zh-Hans": "%d 个习惯",
+    "ja": "%d件の習慣",
+    "fr": "%d habitudes",
+    "es": "%d hábitos",
+    "de": "%d Gewohnheiten",
+    "ko": "%d개 습관"
+  ],
+  "Something went wrong": [
+    "en": "Something went wrong",
+    "zh-Hans": "出了点问题",
+    "ja": "問題が発生しました",
+    "fr": "Une erreur est survenue",
+    "es": "Algo salió mal",
+    "de": "Etwas ist schiefgelaufen",
+    "ko": "문제가 발생했습니다"
+  ],
+  "Retry": [
+    "en": "Retry",
+    "zh-Hans": "重试",
+    "ja": "再試行",
+    "fr": "Réessayer",
+    "es": "Reintentar",
+    "de": "Erneut versuchen",
+    "ko": "다시 시도"
+  ],
+
+  "Archived Habits": [
+    "en": "Archived Habits",
+    "zh-Hans": "已归档习惯",
+    "ja": "アーカイブした習慣",
+    "fr": "Habitudes archivées",
+    "es": "Hábitos archivados",
+    "de": "Archivierte Gewohnheiten",
+    "ko": "보관된 습관"
   ],
 ]

@@ -1,4 +1,4 @@
-﻿ import SwiftUI
+ import SwiftUI
  
  struct WeekCalendarView: View {
      var habits: [Habit]
@@ -23,7 +23,7 @@
                      .font(.subheadline.weight(.semibold))
                      .foregroundColor(.secondary)
                  Spacer()
-                 Text("\(habitCompletionCount(for: selectedDate)) habits")
+                 Text(String(format: T("%d habits"), habitCompletionCount(for: selectedDate)))
                      .font(.caption)
                      .foregroundColor(.secondary)
              }

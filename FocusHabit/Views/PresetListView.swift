@@ -16,7 +16,7 @@ struct PresetListView: View {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(preset.name)
                             .font(.headline)
-                        Text("\(Int(preset.focusDuration / 60))min focus / \(Int(preset.breakDuration / 60))min break")
+                        Text(String(format: T("%dmin focus / %dmin break"), Int(preset.focusDuration / 60), Int(preset.breakDuration / 60)))
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -47,7 +47,7 @@ struct PresetListView: View {
                             Text(preset.name)
                                 .font(.headline)
                                 .foregroundColor(.primary)
-                            Text("\(Int(preset.focusDuration / 60))min focus / \(Int(preset.breakDuration / 60))min break")
+                            Text(String(format: T("%dmin focus / %dmin break"), Int(preset.focusDuration / 60), Int(preset.breakDuration / 60)))
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }

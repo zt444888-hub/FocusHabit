@@ -48,7 +48,7 @@ struct Provider: TimelineProvider {
                  Image(systemName: "checklist")
                      .font(.caption)
                      .foregroundColor(.brand)
-                 Text("Today's Habits")
+                 Text(WT("Today's Habits"))
                      .font(.caption.weight(.semibold))
                      .foregroundColor(.primary)
                  Spacer()
@@ -60,7 +60,7 @@ struct Provider: TimelineProvider {
              
              if entry.habits.isEmpty {
                  Spacer()
-                 Text("No habits yet")
+                 Text(WT("No habits yet"))
                      .font(.caption)
                      .foregroundColor(.secondary)
                  Spacer()
@@ -102,8 +102,8 @@ struct Provider: TimelineProvider {
          StaticConfiguration(kind: kind, provider: Provider()) { entry in
              FocusHabitWidgetEntryView(entry: entry)
          }
-         .configurationDisplayName("Today's Habits")
-         .description("See and track your daily habits.")
+         .configurationDisplayName(WT("Today's Habits (Widget)"))
+        .description(WT("See and track your daily habits."))
          .supportedFamilies([.systemSmall, .systemMedium])
      }
  }

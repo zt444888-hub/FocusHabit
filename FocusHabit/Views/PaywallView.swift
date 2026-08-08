@@ -30,10 +30,10 @@ struct PaywallView: View {
 
                     // Feature list
                     VStack(alignment: .leading, spacing: 16) {
-                        FeatureRow(icon: "checklist", text: "Unlimited habits (free: 3 max)")
-                        FeatureRow(icon: "timer", text: "Custom timer presets")
-                        FeatureRow(icon: "chart.bar", text: "Weekly reports & analytics")
-                        FeatureRow(icon: "xmark.circle", text: "No ads, no tracking")
+                        FeatureRow(icon: "checklist", text: T("Unlimited habits (free: 3 max)"))
+                        FeatureRow(icon: "timer", text: T("Custom timer presets"))
+                        FeatureRow(icon: "chart.bar", text: T("Weekly reports & analytics"))
+                        FeatureRow(icon: "xmark.circle", text: T("No ads, no tracking"))
                     }
                     .padding(.horizontal)
 
@@ -94,7 +94,7 @@ struct PaywallView: View {
                         Button(T("Restore Purchases")) {
                             Task {
                                 await store.restorePurchases()
-                                restoreMessage = store.isPremium ? "Premium restored!" : "No purchase found to restore."
+                                restoreMessage = store.isPremium ? T("Premium restored!") : T("No purchase found to restore.")
                                 showRestoreAlert = true
                             }
                         }

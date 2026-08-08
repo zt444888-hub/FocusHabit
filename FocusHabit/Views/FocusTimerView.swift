@@ -1,4 +1,4 @@
-﻿import SwiftUI
+import SwiftUI
 import SwiftData
 
 struct FocusTimerView: View {
@@ -259,6 +259,13 @@ struct FocusTimerView: View {
             let completion = HabitCompletion(date: today)
             habit.completions.append(completion)
         }
+        // 应用该习惯设置的专注时间到下一轮
+        let habitPreset = TimerPreset(
+            focusDuration: TimeInterval(habit.focusMinutes * 60),
+            breakDuration: timer.currentPreset.breakDuration,
+            name: habit.name
+        )
+        timer.selectPreset(habitPreset)
         timer.startNextFocus()
     }
 }

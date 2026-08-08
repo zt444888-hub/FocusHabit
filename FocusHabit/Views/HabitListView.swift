@@ -1,4 +1,4 @@
-﻿import SwiftUI
+import SwiftUI
 import SwiftData
 
 struct HabitListView: View {
@@ -9,6 +9,8 @@ struct HabitListView: View {
     @State private var editingHabit: Habit?
     @State private var detailHabit: Habit?
     @State private var showPaywall = false
+    @State private var celebrationTrigger = 0
+    @State private var celebrationStart: CGRect = .zero
     private var canAddMore: Bool {
         StoreManager.shared.isPremium || habits.count < StoreManager.shared.maxFreeHabits
     }
@@ -27,31 +29,33 @@ struct HabitListView: View {
                 }
 
                 ForEach(habits) { habit in
-                    HabitCardView(habit: habit, onShowDetail: { detailHabit = $0 })
+                    HabitCardView(habit: habit, onShowDetail: { detailHabit = $0 }, onCelebrate: { frame in
+                        celebrationStart = frame
+                        celebrationTrigger += 1
+                    })
                         .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
                         .listRowBackground(Color.clear)
+                        .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                            Button {
+                                editingHabit = habit
+                            } label: {
+                                Label(T("Edit"), systemImage: "pencil")
+                            }
+                            .tint(.brand)
+                        }
                         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                             Button(role: .destructive) {
-                                withAnimation {
-                                    context.delete(habit)
-                                    try? context.save()
-                                }
+                                deleteHabit(habit)
                             } label: {
                                 Label(T("Delete"), systemImage: "trash")
                             }
                         }
                         .contextMenu {
                             Button(role: .destructive) {
-                                withAnimation {
-                                    context.delete(habit)
-                                    try? context.save()
-                                }
+                                deleteHabit(habit)
                             } label: {
                                 Label(T("Delete"), systemImage: "trash")
                             }
-                        }
-                        .onTapGesture {
-                            editingHabit = habit
                         }
                 }
             }
@@ -84,8 +88,10 @@ struct HabitListView: View {
             .sheet(isPresented: $showPaywall) {
                 PaywallView()
             }
+            .overlay {
+                CelebrationOverlay(startFrame: celebrationStart, trigger: $celebrationTrigger)
+            }
             .onAppear {
-                NotificationManager.requestAuthorization()
                 refreshWidgetData()
             }
             .onChange(of: habits.map(\.isCompletedToday)) { _, _ in
@@ -96,6 +102,17 @@ struct HabitListView: View {
 
     private func refreshWidgetData() {
         WidgetDataWriter.updateWidgetData(for: habits)
+    }
+
+    private func deleteHabit(_ habit: Habit) {
+        // 先清空关联的专注记录，避免删除习惯时 SwiftData 关系处理卡死
+        if let sessions = try? context.fetch(FetchDescriptor<FocusSession>()) {
+            for session in sessions where session.relatedHabit?.persistentModelID == habit.persistentModelID {
+                session.relatedHabit = nil
+            }
+        }
+        context.delete(habit)
+        try? context.save()
     }
 
     private var headerSection: some View {

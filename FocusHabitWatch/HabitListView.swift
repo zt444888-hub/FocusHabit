@@ -7,7 +7,7 @@ struct HabitListView: View {
     var body: some View {
         List {
             if habits.isEmpty {
-                ContentUnavailableView("No Habits", systemImage: "checklist", description: Text("Open the iPhone app to add habits."))
+                ContentUnavailableView(WT("No Habits"), systemImage: "checklist", description: Text(WT("Open the iPhone app to add habits.")))
             }
             ForEach(habits) { habit in
                 HStack {
@@ -28,7 +28,7 @@ struct HabitListView: View {
                 }
             }
         }
-        .navigationTitle("Today")
+        .navigationTitle(WT("Today"))
         .onAppear {
             habits = session.receivedHabits
         }

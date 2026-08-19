@@ -89,11 +89,15 @@ final class TimerManagerTests: XCTestCase {
 
     // MARK: - Timer Countdown
 
-    func testTimeDecreasesAfterStart() async {
+    func testTimeDecreasesAfterStart() {
         sut.start()
         let before = sut.timeRemaining
-        // Wait for a tick (timer fires every 0.5s)
-        try? await Task.sleep(nanoseconds: 800_000_000)  // 0.8s
+        // XCTest 默认不驱动主 RunLoop，用 wait(for:) 跑 runloop 让 1s 定时器触发
+        let tick = expectation(description: "timer tick")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+            tick.fulfill()
+        }
+        wait(for: [tick], timeout: 3)
         let after = sut.timeRemaining
         XCTAssertLessThan(after, before)
     }
@@ -130,10 +134,11 @@ final class TimerManagerTests: XCTestCase {
 
     // MARK: - Background Handling
 
-    func testAppBackgroundPausesTimer() {
+    func testAppBackgroundKeepsRunningForForegroundCorrection() {
         sut.start()
         sut.handleAppBackground()
-        XCTAssertEqual(sut.state, .paused)
+        // 后台语义：状态保持 .running（后台继续走时），前台用 backgroundTime 校正剩余时间
+        XCTAssertEqual(sut.state, .running)
     }
 
     func testAppBackgroundDoesNothingWhenIdle() {

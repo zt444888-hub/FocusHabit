@@ -8,6 +8,11 @@ struct PaywallView: View {
     @State private var showRestoreAlert = false
     @State private var restoreMessage = ""
 
+    /// 优先展示当前在售的 lifetime 产品，兼容历史产品列表
+    private var lifetimeProduct: Product? {
+        store.products.first(where: { $0.id == store.lifetimeID }) ?? store.products.first
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -40,8 +45,8 @@ struct PaywallView: View {
                     // Single lifetime purchase
                     VStack(spacing: 12) {
                             Button {
-                                selectedProduct = store.products.first
-                                if let product = store.products.first {
+                                if let product = lifetimeProduct {
+                                    selectedProduct = product
                                     Task { await store.purchase(product) }
                                 }
                             } label: {
@@ -58,7 +63,7 @@ struct PaywallView: View {
                                         ProgressView()
                                             .scaleEffect(0.8)
                                     } else {
-                                        Text(store.products.first?.displayPrice ?? "$2.99")
+                                        Text(lifetimeProduct?.displayPrice ?? "$2.99")
                                             .font(.title2.weight(.bold))
                                             .foregroundColor(.brand)
                                     }

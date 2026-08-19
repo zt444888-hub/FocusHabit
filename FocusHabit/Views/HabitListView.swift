@@ -101,18 +101,11 @@ struct HabitListView: View {
     }
 
     private func refreshWidgetData() {
-        WidgetDataWriter.updateWidgetData(for: habits)
+        DataSync.refreshAll(habits: habits)
     }
 
     private func deleteHabit(_ habit: Habit) {
-        // 先清空关联的专注记录，避免删除习惯时 SwiftData 关系处理卡死
-        if let sessions = try? context.fetch(FetchDescriptor<FocusSession>()) {
-            for session in sessions where session.relatedHabit?.persistentModelID == habit.persistentModelID {
-                session.relatedHabit = nil
-            }
-        }
-        context.delete(habit)
-        try? context.save()
+        HabitStore.delete(habit, context: context)
     }
 
     private var headerSection: some View {

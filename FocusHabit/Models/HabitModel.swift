@@ -17,6 +17,7 @@ final class Habit {
     var focusMinutes: Int = 25
     var lastFreezeDate: Date?
     var freezeBalance: Int
+    var freezeResetMonth: Int?
 
     @Relationship(deleteRule: .cascade)
     var completions: [HabitCompletion] = []
@@ -35,9 +36,26 @@ final class Habit {
         self.focusMinutes = focusMinutes
         self.lastFreezeDate = nil
         self.freezeBalance = 3
+        self.freezeResetMonth = nil
+    }
+
+    private var currentMonthKey: Int {
+        let calendar = Calendar.current
+        return calendar.component(.year, from: Date()) * 12
+            + calendar.component(.month, from: Date())
+    }
+
+    /// 跨月后把冻结卡额度重置为每月上限。
+    /// 由于 UI 直接读取 freezeBalance，需在展示时（onAppear）也调用一次以保持正确。
+    func refreshFreezeBalanceIfNeeded() {
+        if freezeResetMonth != currentMonthKey {
+            freezeBalance = 3
+            freezeResetMonth = currentMonthKey
+        }
     }
 
     func freezeToday() {
+        refreshFreezeBalanceIfNeeded()
         if let d = lastFreezeDate, Calendar.current.isDateInToday(d) { return }
         guard freezeBalance > 0 else { return }
         lastFreezeDate = Date()
@@ -86,12 +104,43 @@ final class Habit {
             }
         }()
         let startDate = calendar.date(byAdding: .day, value: -lookbackDays, to: today) ?? today
-        let completed = completions.filter { $0.isCompleted && $0.date >= startDate && $0.date <= today }.count
-        return min(Double(completed) / Double(lookbackDays), 1.0)
+        // 用 Set 按天去重：同一天多次打卡只算 1 天；
+        // 日期统一到 startOfDay 再比较，避免"今天"的完成记录（带时间分量）被边界排除
+        let completedDays = Set(completions
+            .filter(\.isCompleted)
+            .map { calendar.startOfDay(for: $0.date) }
+            .filter { $0 >= startDate && $0 <= today })
+        // 新习惯（创建不足 lookbackDays）分母按创建以来的天数，避免前 7 天完成率恒被稀释
+        let createdStart = calendar.startOfDay(for: createdAt)
+        let daysSinceCreated = max(1, calendar.dateComponents([.day], from: createdStart, to: today).day ?? 0)
+        let denominator = min(lookbackDays, daysSinceCreated)
+        return min(Double(completedDays.count) / Double(denominator), 1.0)
     }
 
     var totalCompletions: Int {
         completions.filter(\.isCompleted).count
+    }
+
+    // MARK: - 打卡（统一入口，三处调用：卡片 / 深链 / AppIntent）
+
+    /// 今天未完成时追加一次完成记录；返回是否新增。
+    @discardableResult
+    func checkInToday(context: ModelContext) -> Bool {
+        let today = Calendar.current.startOfDay(for: Date())
+        guard !completions.contains(where: {
+            Calendar.current.isDate($0.date, inSameDayAs: today) && $0.isCompleted
+        }) else { return false }
+        completions.append(HabitCompletion(date: today))
+        try? context.save()
+        return true
+    }
+
+    /// 无条件追加一次今天的完成记录（用于允许每日多次打卡的习惯）。
+    @discardableResult
+    func addCompletionToday(context: ModelContext) -> Bool {
+        completions.append(HabitCompletion(date: Calendar.current.startOfDay(for: Date())))
+        try? context.save()
+        return true
     }
 }
 

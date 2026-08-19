@@ -18,12 +18,17 @@ struct HabitDetailView: View {
             .padding()
         }
         .background(Color(.systemGroupedBackground))
+        .onAppear {
+            habit.refreshFreezeBalanceIfNeeded()
+            try? context.save()
+        }
         .navigationTitle(habit.name)
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItemGroup(placement: .topBarTrailing) {
                 Button(T("Edit")) { showEditSheet = true }
                 Button {
+                    NotificationManager.removeHabitReminder(for: habit)
                     habit.isArchived = true
                     try? context.save()
                     dismiss()
@@ -175,7 +180,16 @@ struct HabitDetailView: View {
     private var monthGrid: some View {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
-        let days: [Date] = (0..<35).compactMap { calendar.date(byAdding: .day, value: -$0, to: today) }.reversed()
+        // 让 5 行 x 7 列网格的首列对齐 Calendar.firstWeekday，避免与星期表头错位
+        let firstWeekday = calendar.firstWeekday
+        let todayWeekday = calendar.component(.weekday, from: today)
+        let daysOffset = (todayWeekday - firstWeekday + 7) % 7
+        let weekStart = calendar.date(byAdding: .day, value: -daysOffset, to: today) ?? today
+        let gridStart = calendar.date(byAdding: .day, value: -34, to: weekStart) ?? weekStart
+        let days = (0..<35).compactMap { calendar.date(byAdding: .day, value: $0, to: gridStart) }
+        // veryShortWeekdaySymbols 按 weekday-1 索引，旋转使 firstWeekday 置于首列
+        let symbols = calendar.veryShortWeekdaySymbols
+        let headers = (0..<7).map { symbols[(firstWeekday - 1 + $0) % 7] }
 
         return VStack(alignment: .leading, spacing: 12) {
             Text(verbatim: T("Last 35 Days"))
@@ -183,7 +197,7 @@ struct HabitDetailView: View {
                 .foregroundColor(.secondary)
 
             HStack(spacing: 6) {
-                ForEach(["S", "M", "T", "W", "T", "F", "S"], id: \.self) { day in
+                ForEach(headers, id: \.self) { day in
                     Text(day)
                         .font(.caption2.weight(.medium))
                         .foregroundColor(.secondary)

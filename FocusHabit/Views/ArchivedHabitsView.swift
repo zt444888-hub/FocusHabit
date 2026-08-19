@@ -39,15 +39,8 @@ struct ArchivedHabitsView: View {
                 }
                 .onDelete { indexSet in
                     for i in indexSet {
-                        let habit = habits[i]
-                        if let sessions = try? context.fetch(FetchDescriptor<FocusSession>()) {
-                            for session in sessions where session.relatedHabit?.persistentModelID == habit.persistentModelID {
-                                session.relatedHabit = nil
-                            }
-                        }
-                        context.delete(habit)
+                        HabitStore.delete(habits[i], context: context)
                     }
-                    try? context.save()
                 }
             }
             .navigationTitle(T("Archived Habits"))

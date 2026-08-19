@@ -98,11 +98,11 @@
                  }
 
                 Section(T("Weekly Goal")) {
-                    Stepper("\(targetDaysPerWeek) days / week", value: $targetDaysPerWeek, in: 1...7)
+                    Stepper(String(format: T("%d days / week"), targetDaysPerWeek), value: $targetDaysPerWeek, in: 1...7)
                 }
 
                 Section(T("Focus Time")) {
-                    Stepper("\(focusMinutes) min", value: $focusMinutes, in: 5...120, step: 5)
+                    Stepper(String(format: T("%d min"), focusMinutes), value: $focusMinutes, in: 5...120, step: 5)
                 }
 
                 Section {
@@ -148,6 +148,7 @@
              existing.iconName = selectedIcon
              existing.canRepeatDaily = canRepeatDaily
              existing.focusMinutes = focusMinutes
+             existing.targetDaysPerWeek = targetDaysPerWeek
              if hasReminder {
                  existing.reminderTime = reminderTime
                  NotificationManager.requestAuthorization()

@@ -5,11 +5,11 @@ struct ContentView: View {
         TabView {
             HabitListView()
                 .tabItem {
-                    Label("Habits", systemImage: "checklist")
+                    Label(WT("Habits"), systemImage: "checklist")
                 }
             TimerView()
                 .tabItem {
-                    Label("Timer", systemImage: "timer")
+                    Label(WT("Timer"), systemImage: "timer")
                 }
         }
     }

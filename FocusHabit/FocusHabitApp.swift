@@ -9,8 +9,14 @@ struct FocusHabitApp: App {
     @AppStorage("darkMode") private var darkMode = false
 
     init() {
+        // 冷启动同步应用内语言选择到系统层（AppleLanguages），保证系统组件语言一致
+        setupLanguage()
+        // 激活 Watch 会话：App 启动即建立 WCSession，后续数据变化经 DataSync 同步到 Watch
+        _ = WatchSessionManager.shared
         do {
-            let container = try ModelContainer(for: Habit.self, HabitCompletion.self, FocusSession.self)
+            let schema = Schema(versionedSchema: AppSchemaV1.self)
+            let container = try ModelContainer(for: schema, migrationPlan: AppMigrationPlan.self)
+            AppModelStore.container = container
             _container = State(initialValue: container)
         } catch {
             _loadError = State(initialValue: error.localizedDescription)
@@ -39,7 +45,9 @@ struct FocusHabitApp: App {
 
     private func retry() {
         do {
-            let container = try ModelContainer(for: Habit.self, HabitCompletion.self, FocusSession.self)
+            let schema = Schema(versionedSchema: AppSchemaV1.self)
+            let container = try ModelContainer(for: schema, migrationPlan: AppMigrationPlan.self)
+            AppModelStore.container = container
             self.container = container
             loadError = nil
         } catch {

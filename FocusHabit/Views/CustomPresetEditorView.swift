@@ -28,8 +28,8 @@ struct CustomPresetEditorView: View {
                 }
 
                 Section {
-                    Stepper("Focus: \(focusMinutes) min", value: $focusMinutes, in: 1...180)
-                    Stepper("Break: \(breakMinutes) min", value: $breakMinutes, in: 1...60)
+                    Stepper(String(format: T("Focus: %d min"), focusMinutes), value: $focusMinutes, in: 1...180)
+                    Stepper(String(format: T("Break: %d min"), breakMinutes), value: $breakMinutes, in: 1...60)
                 } header: {
                     Text(verbatim: T("Duration"))
                 }

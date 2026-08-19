@@ -12,11 +12,20 @@ final class StoreManager {
     private(set) var errorMessage: String?
 
     let lifetimeID = "com.a1111.FocusHabit.premium.lifetime2"
+    /// 历史产品 ID 兼容：若 1.x 曾售卖过旧 lifetime 产品，老用户恢复购买时任一命中即视为 Premium。
+    /// 若确认从未售卖过旧 ID，可只保留 lifetimeID（此处保留防御性兼容）。
+    let legacyLifetimeIDs = ["com.a1111.FocusHabit.premium.lifetime"]
+
+    private var allLifetimeIDs: [String] {
+        [lifetimeID] + legacyLifetimeIDs
+    }
 
     private nonisolated(unsafe) var updateListenerTask: Task<Void, Error>?
 
     init() {
         updateListenerTask = listenForTransactions()
+        // 冷启动即恢复已购权益，避免已购用户重启后显示未购买
+        Task { await checkEntitlements() }
     }
 
     nonisolated deinit {
@@ -27,7 +36,7 @@ final class StoreManager {
         isLoading = true
         errorMessage = nil
         do {
-            products = try await Product.products(for: [lifetimeID])
+            products = try await Product.products(for: allLifetimeIDs)
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -72,7 +81,7 @@ final class StoreManager {
         var premium = false
         for await result in Transaction.currentEntitlements {
             if case .verified(let transaction) = result,
-               transaction.productID == lifetimeID,
+               allLifetimeIDs.contains(transaction.productID),
                transaction.revocationDate == nil {
                 premium = true
                 break

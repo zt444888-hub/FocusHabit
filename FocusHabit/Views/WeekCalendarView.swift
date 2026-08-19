@@ -77,7 +77,6 @@
              }
              
              if total > 0 {
-                 // let fraction = ... unused
                  VStack(spacing: 2) {
                      ForEach(0..<min(3, total), id: \.self) { i in
                          Circle()

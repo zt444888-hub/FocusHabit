@@ -5,8 +5,8 @@ import SwiftData
 
 struct ReportView: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.modelContext) private var context
     @Query private var allHabits: [Habit]
+    @Query private var allSessions: [FocusSession]
     @State private var showPaywall = false
 
     var body: some View {
@@ -126,8 +126,7 @@ struct ReportView: View {
     }
 
     private func focusSeconds(in range: ClosedRange<Date>) -> Double {
-        guard let sessions = try? context.fetch(FetchDescriptor<FocusSession>()) else { return 0 }
-        return sessions.filter { range.contains($0.date) }.reduce(0) { $0 + $1.duration }
+        allSessions.filter { range.contains($0.date) }.reduce(0) { $0 + $1.duration }
     }
 
     private var bestStreak: Int {
@@ -144,9 +143,9 @@ struct ReportView: View {
 
         return VStack(spacing: 16) {
             HStack(spacing: 24) {
-                StatItem(value: "\(Int(rate * 100))%", label: "this week", color: .brand)
-                StatItem(value: "\(bestStreak)", label: "best streak", color: .brand)
-                StatItem(value: focusHours > 0 ? "\(focusHours)h \(focusMin)m" : "\(focusMin)m", label: "focus time", color: .brand)
+                StatItem(value: "\(Int(rate * 100))%", label: T("This Week"), color: .brand)
+                StatItem(value: "\(bestStreak)", label: T("Best Streak"), color: .brand)
+                StatItem(value: focusHours > 0 ? "\(focusHours)h \(focusMin)m" : "\(focusMin)m", label: T("Focus Time"), color: .brand)
             }
 
             if rate < 0.5 {

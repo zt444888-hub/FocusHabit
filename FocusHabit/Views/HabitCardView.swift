@@ -72,6 +72,17 @@
                  .stroke(habit.isCompletedToday ? Color(habit.colorName).opacity(0.3) : Color.clear, lineWidth: 1)
          )
          .contentShape(Rectangle())
+         .accessibilityElement(children: .combine)
+         .accessibilityLabel(habit.name)
+         .accessibilityValue(Text(verbatim: habit.isCompletedToday ? T("Completed") : T("Not completed")))
+         .accessibilityAction(named: Text(verbatim: habit.isCompletedToday ? T("Open details") : T("Check in"))) {
+             if habit.isCompletedToday {
+                 onShowDetail?(habit)
+             } else {
+                 toggleCompletion()
+             }
+         }
+         .accessibilityAddTraits(.isButton)
 
          if habit.canRepeatDaily {
              card
@@ -164,12 +175,13 @@
      }
      
      private func toggleCompletion() {
-         let today = Calendar.current.startOfDay(for: Date())
          if !habit.canRepeatDaily && habit.isCompletedToday { return }
          let countBefore = habit.todayCompletionCount
-         let completion = HabitCompletion(date: today)
-         habit.completions.append(completion)
-        try? context.save()
+         if habit.canRepeatDaily {
+             habit.addCompletionToday(context: context)
+         } else {
+             habit.checkInToday(context: context)
+         }
          // 只有每天第一次打卡时触发庆祝动画
          if countBefore == 0 {
              onCelebrate?(cardFrame)
@@ -185,11 +197,9 @@
      }
 
      private func addMultipleCompletions(_ count: Int) {
-         let today = Calendar.current.startOfDay(for: Date())
          for _ in 0..<count {
-             habit.completions.append(HabitCompletion(date: today))
+             habit.addCompletionToday(context: context)
          }
-         try? context.save()
          // 双击多次打卡：总是触发庆祝动画
          onCelebrate?(cardFrame)
          withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {

@@ -1,9 +1,12 @@
 ﻿@preconcurrency import Foundation
 import SwiftData
+import WidgetKit
 
 struct WidgetDataWriter {
     private static let defaults = UserDefaults(suiteName: "group.com.a1111.FocusHabit")
     private static let key = "todayHabits"
+    /// 数据快照归属日期（startOfDay），供 Widget 判断跨天后展示"未完成"态
+    private static let dateKey = "todayHabitsDate"
 
     static func updateWidgetData(for habits: [Habit]) {
         let calendar = Calendar.current
@@ -23,6 +26,8 @@ struct WidgetDataWriter {
 
         if let data = try? JSONEncoder().encode(widgetHabits) {
             defaults?.set(data, forKey: key)
+            defaults?.set(today, forKey: dateKey)
+            WidgetCenter.shared.reloadAllTimelines()
         }
     }
 
@@ -32,5 +37,10 @@ struct WidgetDataWriter {
             return []
         }
         return habits
+    }
+
+    /// 供 Widget Provider 判断快照是否已过期（跨天）
+    static func snapshotDate() -> Date? {
+        defaults?.object(forKey: dateKey) as? Date
     }
 }

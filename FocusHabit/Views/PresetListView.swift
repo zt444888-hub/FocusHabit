@@ -14,7 +14,7 @@ struct PresetListView: View {
             Section(T("Built-in")) {
                 ForEach(builtIns) { preset in
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(preset.name)
+                        Text(verbatim: T(preset.name))
                             .font(.headline)
                         Text(String(format: T("%dmin focus / %dmin break"), Int(preset.focusDuration / 60), Int(preset.breakDuration / 60)))
                             .font(.caption)

@@ -8,7 +8,6 @@ struct FocusTimerView: View {
     private var habits: [Habit]
 
     private let timer = TimerManager.shared
-    @State private var selectedHabitForTimer: Habit?
     @State private var showCompletionAlert = false
     @State private var customPresets: [TimerPreset] = CustomPresetsManager.load()
     private let audioManager = AudioManager.shared
@@ -47,9 +46,6 @@ struct FocusTimerView: View {
                 }
             } message: {
                 Text(verbatim: T("Great focus! Did you work on a habit?"))
-            }
-            .onAppear {
-                customPresets = CustomPresetsManager.load()
             }
             .onReceive(NotificationCenter.default.publisher(for: .init("CustomPresetsChanged"))) { _ in
                 customPresets = CustomPresetsManager.load()
@@ -252,14 +248,9 @@ struct FocusTimerView: View {
     }
 
     private func markHabitForTimer(_ habit: Habit) {
-        let today = Calendar.current.startOfDay(for: Date())
-        if !habit.completions.contains(where: {
-            Calendar.current.startOfDay(for: $0.date) == today
-        }) {
-            let completion = HabitCompletion(date: today)
-            habit.completions.append(completion)
-        }
-        // 应用该习惯设置的专注时间到下一轮
+        habit.checkInToday(context: context)
+        DataSync.refreshAll(habits: habits)
+        // 应用该习惯设置的专注时间到下一轮，并记录关联以便 FocusSession 落库
         let habitPreset = TimerPreset(
             focusDuration: TimeInterval(habit.focusMinutes * 60),
             breakDuration: timer.currentPreset.breakDuration,
@@ -267,5 +258,6 @@ struct FocusTimerView: View {
         )
         timer.selectPreset(habitPreset)
         timer.startNextFocus()
+        timer.currentHabit = habit
     }
 }

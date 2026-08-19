@@ -694,15 +694,6 @@ let translations: [String: [String: String]] = [
     "de": "Benutzerdefinierte Voreinstellungen freischalten",
     "ko": "사용자 정의 프리셋 잠금 해제"
   ],
-  "Completed": [
-    "en": "Completed",
-    "zh-Hans": "已完成",
-    "ja": "完了",
-    "fr": "Terminé",
-    "es": "Completado",
-    "de": "Abgeschlossen",
-    "ko": "완료"
-  ],
   "What's your goal?": [
     "en": "What's your goal?",
     "zh-Hans": "你的目标是什么？",
@@ -1413,5 +1404,158 @@ let translations: [String: [String: String]] = [
     "es": "Hábitos archivados",
     "de": "Archivierte Gewohnheiten",
     "ko": "보관된 습관"
+  ],
+  "Best Streak": [
+    "en": "Best Streak",
+    "zh-Hans": "最佳连续",
+    "ja": "最長連続",
+    "fr": "Meilleure série",
+    "es": "Mejor racha",
+    "de": "Beste Serie",
+    "ko": "최장 연속"
+  ],
+  "Remove": [
+    "en": "Remove",
+    "zh-Hans": "移除",
+    "ja": "削除",
+    "fr": "Supprimer",
+    "es": "Eliminar",
+    "de": "Entfernen",
+    "ko": "제거"
+  ],
+  "Add": [
+    "en": "Add",
+    "zh-Hans": "添加",
+    "ja": "追加",
+    "fr": "Ajouter",
+    "es": "Añadir",
+    "de": "Hinzufügen",
+    "ko": "추가"
+  ],
+  "%d days / week": [
+    "en": "%d days / week",
+    "zh-Hans": "每周 %d 天",
+    "ja": "週%d日",
+    "fr": "%d jours / semaine",
+    "es": "%d días / semana",
+    "de": "%d Tage / Woche",
+    "ko": "주 %d일"
+  ],
+  "Focus: %d min": [
+    "en": "Focus: %d min",
+    "zh-Hans": "专注：%d 分钟",
+    "ja": "集中：%d分",
+    "fr": "Focus : %d min",
+    "es": "Enfoque: %d min",
+    "de": "Fokus: %d Min.",
+    "ko": "집중: %d분"
+  ],
+  "%d min": [
+    "en": "%d min",
+    "zh-Hans": "%d 分钟",
+    "ja": "%d分",
+    "fr": "%d min",
+    "es": "%d min",
+    "de": "%d Min.",
+    "ko": "%d분"
+  ],
+  "Break: %d min": [
+    "en": "Break: %d min",
+    "zh-Hans": "休息：%d 分钟",
+    "ja": "休憩：%d分",
+    "fr": "Pause : %d min",
+    "es": "Descanso: %d min",
+    "de": "Pause: %d Min.",
+    "ko": "휴식: %d분"
+  ],
+  "Completed": [
+    "en": "Completed",
+    "zh-Hans": "已完成",
+    "ja": "完了",
+    "fr": "Terminée",
+    "es": "Completada",
+    "de": "Abgeschlossen",
+    "ko": "완료됨"
+  ],
+  "Not completed": [
+    "en": "Not completed",
+    "zh-Hans": "未完成",
+    "ja": "未完了",
+    "fr": "Non terminée",
+    "es": "No completada",
+    "de": "Nicht abgeschlossen",
+    "ko": "미완료"
+  ],
+  "Check in": [
+    "en": "Check in",
+    "zh-Hans": "打卡",
+    "ja": "チェックイン",
+    "fr": "Pointer",
+    "es": "Registrar",
+    "de": "Check-in",
+    "ko": "체크인"
+  ],
+  "Open details": [
+    "en": "Open details",
+    "zh-Hans": "查看详情",
+    "ja": "詳細を開く",
+    "fr": "Voir les détails",
+    "es": "Ver detalles",
+    "de": "Details öffnen",
+    "ko": "상세 보기"
+  ],
+  "Quick Focus": [
+    "en": "Quick Focus",
+    "zh-Hans": "快速专注",
+    "ja": "クイック集中",
+    "fr": "Concentration rapide",
+    "es": "Enfoque rápido",
+    "de": "Schneller Fokus",
+    "ko": "빠른 집중"
+  ],
+  "Focus started. %d minutes.": [
+    "en": "Focus started. %d minutes.",
+    "zh-Hans": "专注已开始。%d 分钟。",
+    "ja": "集中を開始しました。%d 分間。",
+    "fr": "Concentration démarrée. %d minutes.",
+    "es": "Enfoque iniciado. %d minutos.",
+    "de": "Fokus gestartet. %d Minuten.",
+    "ko": "집중을 시작했습니다. %d분."
+  ],
+  "App is not ready.": [
+    "en": "App is not ready.",
+    "zh-Hans": "应用尚未就绪。",
+    "ja": "アプリが準備できていません。",
+    "fr": "L'app n'est pas prête.",
+    "es": "La app no está lista.",
+    "de": "App ist nicht bereit.",
+    "ko": "앱이 준비되지 않았습니다."
+  ],
+  "No habit named %@.": [
+    "en": "No habit named %@.",
+    "zh-Hans": "没有名为 %@ 的习惯。",
+    "ja": "「%@」という習慣はありません。",
+    "fr": "Aucune habitude nommée %@.",
+    "es": "No hay ningún hábito llamado %@.",
+    "de": "Keine Gewohnheit namens %@.",
+    "ko": "%@이라는 이름의 습관이 없습니다."
+  ],
+  "Checked in %@!": [
+    "en": "Checked in %@!",
+    "zh-Hans": "已打卡 %@！",
+    "ja": "%@ をチェックインしました！",
+    "fr": "%@ pointé !",
+    "es": "¡%@ registrado!",
+    "de": "%@ eingecheckt!",
+    "ko": "%@ 체크인 완료!"
+  ],
+  "%@ is already checked in today.": [
+    "en": "%@ is already checked in today.",
+    "zh-Hans": "%@ 今天已打过卡。",
+    "ja": "今日は既に %@ をチェックインしています。",
+    "fr": "%@ est déjà pointé aujourd'hui.",
+    "es": "%@ ya está registrado hoy.",
+    "de": "%@ wurde heute bereits eingecheckt.",
+    "ko": "%@은(는) 오늘 이미 체크인했습니다."
   ],
 ]

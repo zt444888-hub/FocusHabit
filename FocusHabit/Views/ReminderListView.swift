@@ -22,7 +22,7 @@ struct ReminderListView: View {
                             }
                         }
                         Spacer()
-                        Button(habit.reminderTime != nil ? "Remove" : "Add") {
+                        Button(habit.reminderTime != nil ? T("Remove") : T("Add")) {
                             if habit.reminderTime != nil {
                                 NotificationManager.removeHabitReminder(for: habit)
                                 habit.reminderTime = nil

@@ -25,8 +25,13 @@ final class WatchSessionManager: NSObject {
         let watchHabits = habits.filter { !$0.isArchived }.map { h in
             WatchHabit(id: h.id, name: h.name, isCompleted: h.isCompletedToday, streak: h.currentStreak)
         }
-        if let data = try? JSONEncoder().encode(watchHabits) {
-            WCSession.default.sendMessage(["habits": data], replyHandler: nil)
+        guard let data = try? JSONEncoder().encode(watchHabits) else { return }
+        // 用 applicationContext 而非 sendMessage：sendMessage 要求 Watch App 在前台，
+        // 失败即丢；applicationContext 由系统缓存，Watch 端下次可达时自动送达，可靠得多。
+        do {
+            try WCSession.default.updateApplicationContext(["habits": data])
+        } catch {
+            // Watch 未激活时静默失败，下次 sendHabits 会重试
         }
     }
 }

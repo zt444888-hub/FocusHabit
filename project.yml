@@ -21,14 +21,16 @@ targets:
       - FocusHabit/PrivacyInfo.xcprivacy
       - FocusHabit/FocusHabitApp.swift
       - FocusHabit/Theme.swift
-      - Shared
+      - path: Shared
+    dependencies:
+      - target: FocusHabitWidget
     info:
       path: FocusHabit/Info.plist
       properties:
         CFBundleDisplayName: FocusHabit Pro
         CFBundlePackageType: APPL
-        CFBundleShortVersionString: "2.0"
-        CFBundleVersion: "5"
+        CFBundleShortVersionString: "2.1"
+        CFBundleVersion: "6"
         LSRequiresIPhoneOS: true
         UILaunchScreen: {}
         UIBackgroundModes: [audio]
@@ -62,15 +64,15 @@ targets:
       - FocusHabitWidget
       - FocusHabit/Assets.xcassets
       - FocusHabit/PrivacyInfo.xcprivacy
-      - Shared
+      - path: Shared
       - FocusHabit/Theme.swift
     info:
       path: FocusHabitWidget/Info.plist
       properties:
         CFBundleDisplayName: FocusHabit Pro Widget
         CFBundlePackageType: XPC!
-        CFBundleShortVersionString: "2.0"
-        CFBundleVersion: "5"
+        CFBundleShortVersionString: "2.1"
+        CFBundleVersion: "6"
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     settings:
@@ -82,6 +84,66 @@ targets:
       properties:
         com.apple.security.application-groups:
           - group.com.a1111.FocusHabit
+
+  FocusHabitWatch:
+    type: application
+    platform: watchOS
+    deploymentTarget:
+      watchOS: "10.0"
+    sources:
+      - FocusHabitWatch
+    info:
+      path: FocusHabitWatch/Info.plist
+      properties:
+        CFBundleDisplayName: FocusHabit Watch
+        CFBundleShortVersionString: "2.1"
+        CFBundleVersion: "6"
+        WKWatchOnly: true
+        LSRequiresIPhoneOS: false
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.a1111.FocusHabit.watchkitapp
+        DEVELOPMENT_TEAM: "2VBHV3VJ8N"
+        CODE_SIGN_STYLE: Automatic
+        TARGETED_DEVICE_FAMILY: "4"
+        SWIFT_VERSION: "5.0"
+        SDKROOT: watchos
+        INFOPLIST_KEY_WKCompanionAppBundleIdentifier: com.a1111.FocusHabit
+    entitlements:
+      path: FocusHabitWatch/FocusHabitWatch.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.a1111.FocusHabit
+
+  ShareHabitExtension:
+    type: app-extension
+    platform: iOS
+    sources:
+      - ShareHabitExtension
+    info:
+      path: ShareHabitExtension/Info.plist
+      properties:
+        CFBundleDisplayName: Save to FocusHabit
+        CFBundlePackageType: XPC!
+        CFBundleShortVersionString: "2.1"
+        CFBundleVersion: "6"
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.share-services
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).ShareViewController
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.a1111.FocusHabit.ShareHabitExtension
+        DEVELOPMENT_TEAM: "2VBHV3VJ8N"
+        CODE_SIGN_STYLE: Automatic
+        SWIFT_VERSION: "5.0"
+        SKIP_INSTALL: true
+    entitlements:
+      path: ShareHabitExtension/ShareHabitExtension.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.a1111.FocusHabit
+    dependencies:
+      - target: FocusHabit
 
   FocusHabitTests:
     type: bundle.unit-test

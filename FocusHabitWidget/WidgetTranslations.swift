@@ -52,5 +52,35 @@ private let translations: [String: [String: String]] = [
         "es": "Consulta y sigue tus hábitos diarios.",
         "de": "Sieh und verfolge deine täglichen Gewohnheiten.",
         "ko": "매일의 습관을 확인하고 기록하세요."
+    ],
+    "Focusing": [
+        "en": "Focusing",
+        "zh-Hans": "专注中",
+        "zh-Hant": "專注中",
+        "ja": "集中中",
+        "fr": "En concentration",
+        "es": "Enfocando",
+        "de": "Fokussiert",
+        "ko": "집중 중"
+    ],
+    "Paused": [
+        "en": "Paused",
+        "zh-Hans": "已暂停",
+        "zh-Hant": "已暫停",
+        "ja": "一時停止中",
+        "fr": "En pause",
+        "es": "En pausa",
+        "de": "Pausiert",
+        "ko": "일시정지됨"
+    ],
+    "Break": [
+        "en": "Break",
+        "zh-Hans": "休息",
+        "zh-Hant": "休息",
+        "ja": "休憩",
+        "fr": "Pause",
+        "es": "Descanso",
+        "de": "Pause",
+        "ko": "휴식"
     ]
 ]

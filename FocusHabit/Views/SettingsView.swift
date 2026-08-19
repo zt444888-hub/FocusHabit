@@ -152,7 +152,6 @@ struct SettingsView: View {
                         } else {
                             UserDefaults.standard.set([newValue], forKey: "AppleLanguages")
                         }
-                        UserDefaults.standard.synchronize()
                         showLanguageAlert = true
                     }
                 }
@@ -161,7 +160,7 @@ struct SettingsView: View {
                     HStack {
                         Text(verbatim: T("Version"))
                         Spacer()
-                        Text(verbatim: T("2.0"))
+                        Text(verbatim: appVersion)
                             .foregroundColor(.secondary)
                     }
 
@@ -245,9 +244,19 @@ struct SettingsView: View {
         return url
     }
 
+    /// 从 Bundle 读取版本号，避免发版时改翻译表
+    private var appVersion: String {
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
+    }
+
     private func deleteAllData() {
         for habit in allHabits {
-            context.delete(habit)
+            HabitStore.delete(habit, context: context)
+        }
+        if let sessions = try? context.fetch(FetchDescriptor<FocusSession>()) {
+            for session in sessions {
+                context.delete(session)
+            }
         }
         try? context.save()
     }

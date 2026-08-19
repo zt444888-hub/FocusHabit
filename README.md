@@ -4,29 +4,28 @@
  
  ## 项目结构
  
- ```
- FocusHabit/
- ├── FocusHabit/                      # App 主 Target
- │   ├── FocusHabitApp.swift          # App 入口 + SwiftData 配置
- │   ├── Models/
- │   │   └── HabitModel.swift         # Habit, HabitCompletion, TimerPreset 模型
- │   ├── Views/
- │   │   ├── ContentView.swift        # 主 TabView (Habits / Focus / Settings)
- │   │   ├── HabitListView.swift      # 习惯列表 + 每周日历头部
- │   │   ├── HabitCardView.swift      # 单个习惯卡片 (打勾/连续天数/周进度环)
- │   │   ├── AddHabitView.swift       # 添加/编辑习惯表单
- │   │   ├── FocusTimerView.swift     # 番茄钟专注计时器
- │   │   ├── WeekCalendarView.swift   # 周视图日历 (显示本周习惯完成情况)
- │   │   └── SettingsView.swift       # 设置页 (统计/重置数据)
- │   ├── Managers/
- │   │   ├── TimerManager.swift       # 番茄钟逻辑 @Observable
- │   │   ├── NotificationManager.swift# 本地通知
- │   │   └── WidgetDataWriter.swift   # App → Widget 数据同步
- │   └── Resources/                   # 空 (使用 SF Symbols)
- │
- └── FocusHabitWidget/               # Widget Extension
-     └── FocusHabitWidget.swift       # iOS Widget (Small + Medium)
- ```
+```
+FocusHabit/
+├── FocusHabit/                      # App 主 Target
+│   ├── FocusHabitApp.swift          # App 入口 + SwiftData 配置
+│   ├── Models/
+│   │   ├── HabitModel.swift         # Habit, HabitCompletion, TimerPreset 模型
+│   │   ├── AppSchema.swift          # 版本化 Schema + 迁移计划
+│   │   └── FocusSession.swift       # 专注会话记录（供报表统计）
+│   ├── Views/                       # 全部 SwiftUI 视图
+│   ├── Managers/
+│   │   ├── TimerManager.swift       # 番茄钟逻辑 @Observable
+│   │   ├── DataSync.swift           # Widget + Watch 统一同步门面
+│   │   ├── StoreManager.swift       # StoreKit 2 买断 IAP
+│   │   ├── AppIntents.swift         # Siri / 快捷指令
+│   │   ├── NotificationManager.swift# 本地通知
+│   │   └── WidgetDataWriter.swift   # App → Widget 数据同步
+│   └── Resources/                   # 白噪音音频等资源
+├── FocusHabitWidget/               # Widget Extension (Small/Medium/锁屏)
+├── FocusHabitWatch/                # watchOS App
+├── ShareHabitExtension/            # 分享扩展（把分享内容存为习惯）
+└── FocusHabitTests/                # 单元测试
+```
  
  ## 特色功能
  
@@ -87,13 +86,15 @@
  - [ ] 填写副标题和关键词（ASO）
  - [ ] 设置隐私政策 URL（可用免费模板）
  
- ## 技术栈
- 
- - Swift 6 + SwiftUI
- - SwiftData（数据持久化）
- - WidgetKit（小组件）
- - UserNotifications（本地提醒）
- - 无需外部依赖
+## 技术栈
+
+- Swift + SwiftUI（Xcode 26，Swift 5 语言模式）
+- SwiftData（数据持久化，版本化 Schema + 迁移计划）
+- WidgetKit（小组件）
+- StoreKit 2（一次性买断 IAP）
+- UserNotifications（本地提醒）
+- WatchConnectivity（Watch 数据同步）
+- 无需外部依赖
  
  ## 设计理念
  

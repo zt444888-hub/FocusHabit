@@ -2,7 +2,7 @@ import Foundation
 import SwiftData
 import OSLog
 
-private let log = Logger(subsystem: "com.yourapp.FocusHabit", category: "persistence")
+private let log = Logger(subsystem: "com.a1111.FocusHabit", category: "persistence")
 
 extension ModelContext {
     /// 安全保存并记录错误（不会弹 UI 打断用户）

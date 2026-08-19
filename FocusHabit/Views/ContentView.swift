@@ -29,7 +29,13 @@ struct ContentView: View {
                 .tag(2)
         }
         .onOpenURL(perform: handleURL)
-        .onAppear { consumeSharedIfNeeded() }
+        .onAppear {
+            // 自动化/调试钩子：SIMCTL_CHILD_FH_AUTOSTART_FOCUS=1 启动即自动开始专注
+            if ProcessInfo.processInfo.environment["FH_AUTOSTART_FOCUS"] == "1" {
+                TimerManager.shared.start()
+            }
+            consumeSharedIfNeeded()
+        }
         .onChange(of: selectedTab) { _, _ in consumeSharedIfNeeded() }
         .tint(.brand)
         .preferredColorScheme(darkMode ? .dark : .light)
@@ -38,13 +44,17 @@ struct ContentView: View {
 
     /// 处理小组件 / 灵动岛 / 快捷指令发来的深链：
     /// - focushabit://check/<id>  打卡指定习惯
-    /// - focushabit://timer       打开专注计时页
-    /// - focushabit://            打开习惯列表
+    /// - focushabit://start      直接开始一轮专注（快捷指令/自动化可用）
+    /// - focushabit://timer      打开专注计时页
+    /// - focushabit://           打开习惯列表
     private func handleURL(_ url: URL) {
         guard url.scheme == "focushabit" else { return }
         switch url.host {
         case "timer":
             selectedTab = 1
+        case "start":
+            selectedTab = 1
+            TimerManager.shared.start()
         case "check":
             let id = url.lastPathComponent
             if let habit = habits.first(where: { $0.id == id }) {

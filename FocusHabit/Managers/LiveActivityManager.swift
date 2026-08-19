@@ -1,5 +1,6 @@
 import ActivityKit
 import Foundation
+import UIKit
 
 /// 番茄钟 Live Activity 的统一门面。
 /// TimerManager 在 start/pause/reset/skip/complete 时调用 sync / endCurrent。
@@ -39,6 +40,7 @@ final class LiveActivityManager {
         )
 
         if let activity = currentActivity {
+            NSLog("[FocusHabit LiveActivity] update: paused=\(isPaused) endDate=\(endDate)")
             Task { await activity.update(using: state) }
         } else if isRunning {
             // 清理系统残留的历史 Activity（如上次崩溃未 end），再申请新的
@@ -52,8 +54,10 @@ final class LiveActivityManager {
                     contentState: state,
                     pushType: nil
                 )
+                NSLog("[FocusHabit LiveActivity] request OK id=\(currentActivity!.id) ios=\(UIDevice.current.systemVersion) model=\(UIDevice.current.model)")
             } catch {
-                // Live Activities 不可用：静默降级，计时器照常工作
+                // 打印失败原因：Live Activities 被关闭 / 模拟器限制 / 机型不支持等
+                NSLog("[FocusHabit LiveActivity] request FAILED: \(error.localizedDescription) | ios=\(UIDevice.current.systemVersion) model=\(UIDevice.current.model)")
             }
         }
     }

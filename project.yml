@@ -43,6 +43,7 @@ targets:
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
         CFBundleIconName: AppIcon
+        NSSupportsLiveActivities: true
         CFBundleURLTypes:
           - CFBundleURLSchemes:
               - focushabit

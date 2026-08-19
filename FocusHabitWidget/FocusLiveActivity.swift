@@ -12,34 +12,27 @@ struct FocusLiveActivity: Widget {
             LockScreenView(context: context)
         } dynamicIsland: { context in
             DynamicIsland {
-                // MARK: Expanded
+                // Expanded（长按展开）— 保持单行紧凑胶囊，不放 bottom
+                // 完整信息（presetName + 状态）放在锁屏横幅
                 DynamicIslandExpandedRegion(.leading) {
                     Image(systemName: "timer")
-                        .font(.title2)
+                        .font(.body)
                         .foregroundStyle(.brand)
                 }
                 DynamicIslandExpandedRegion(.trailing) {
                     countdownText(context: context)
-                        .font(.title2.monospacedDigit().weight(.bold))
-                }
-                DynamicIslandExpandedRegion(.bottom) {
-                    VStack(spacing: 4) {
-                        Text(context.attributes.presetName)
-                            .font(.subheadline.weight(.semibold))
-                            .lineLimit(1)
-                        statusLabel(context: context)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
+                        .font(.caption.monospacedDigit().weight(.semibold))
                 }
             } compactLeading: {
                 Image(systemName: "timer")
+                    .font(.caption)
                     .foregroundStyle(.brand)
             } compactTrailing: {
                 countdownText(context: context)
                     .font(.caption.monospacedDigit().weight(.semibold))
             } minimal: {
                 Image(systemName: "timer")
+                    .font(.caption)
                     .foregroundStyle(.brand)
             }
         }
